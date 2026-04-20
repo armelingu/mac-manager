@@ -51,6 +51,6 @@ def usage_color(pct: float, warn: float = 70, crit: float = 90) -> str:
 def bar(pct: float, width: int = 20, color: str | None = None) -> str:
     """Simple text-based progress bar using rich markup."""
     pct = max(0.0, min(100.0, pct))
-    filled = int(round(width * pct / 100))
+    filled = round(width * pct / 100)
     color = color or usage_color(pct)
     return f"[{color}]{'█' * filled}{'░' * (width - filled)}[/]"

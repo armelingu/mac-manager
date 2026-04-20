@@ -31,8 +31,7 @@ from macmanager.cache import is_miss, peek
 from macmanager.disk import render_disk_panel
 from macmanager.doctor import doctor as run_doctor
 from macmanager.network import render_network_panel
-from macmanager.security import check_macos_updates
-from macmanager.security import run_all as run_security
+from macmanager.security import check_macos_updates, run_all as run_security
 from macmanager.system import render_system_panel
 from macmanager.ui import console, health_color
 

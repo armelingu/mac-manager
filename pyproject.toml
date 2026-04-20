@@ -99,21 +99,50 @@ extend-exclude = [".venv", "build", "dist", "logs", "launchd"]
 
 [tool.ruff.lint]
 select = [
-    "E",   # pycodestyle errors
-    "F",   # pyflakes
-    "W",   # pycodestyle warnings
-    "I",   # isort
-    "UP",  # pyupgrade
-    "B",   # flake8-bugbear
-    "C4",  # flake8-comprehensions
-    "SIM", # flake8-simplify
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "W",    # pycodestyle warnings
+    "I",    # isort
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "C4",   # flake8-comprehensions
+    "SIM",  # flake8-simplify
+    "PIE",  # flake8-pie (misc lints)
+    "RET",  # flake8-return (return idioms)
+    "RUF",  # ruff-specific rules
+    "PT",   # flake8-pytest-style
+    "TID",  # flake8-tidy-imports
 ]
 ignore = [
-    "E501",  # line-too-long (handled by formatter; keep pragmatic)
-    "B008",  # function-call-in-default-arg (common, pragmatic)
-    "UP007", # non-pep604-annotation-union: project still supports Python 3.9
-    "UP045", # non-pep604-annotation-optional: project still supports Python 3.9
+    "E501",   # line-too-long (handled by formatter; keep pragmatic)
+    "B008",   # function-call-in-default-arg (common, pragmatic)
+    "UP007",  # non-pep604-annotation-union: project still supports Python 3.9
+    "UP045",  # non-pep604-annotation-optional: project still supports Python 3.9
+    "RET504", # unnecessary-assign-before-return (style preference, hurts readability)
+    "SIM117", # multiple-with-statements (often less readable when nested)
+    "RUF001", # ambiguous-unicode: project keeps verbatim non-English error strings
+    "RUF002", # ambiguous-unicode-docstring: same reasoning
+    "RUF003", # ambiguous-unicode-comment: same reasoning
 ]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests are allowed to use assert statements, mark setup fixtures freely
+# and import their target modules at function scope.
+"tests/**/*.py" = [
+    "B011",   # do-not-call-assert-false (we never call assert False)
+    "PT011",  # pytest-raises-too-broad (allow broad pytest.raises in smoke tests)
+]
+# scripts/ are throwaway maintenance utilities; relax docstring/type rigor.
+"scripts/**/*.py" = [
+    "T201",   # print is fine in scripts
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["macmanager", "tests"]
+combine-as-imports = true
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
 
 [tool.ruff.format]
 quote-style = "double"
