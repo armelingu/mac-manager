@@ -63,6 +63,7 @@ dev = [
     "twine>=5.0",
     "ruff>=0.6",
     "mypy>=1.11",
+    "types-psutil",
     "pre-commit>=3.7",
     "pytest>=8.0",
     "pytest-cov>=5.0",
@@ -185,6 +186,47 @@ exclude_lines = [
     "if __name__ == .__main__.:",
     "if TYPE_CHECKING:",
 ]
+
+# ---------------------------------------------------------------------------
+# Mypy
+#
+# Pragmatic configuration: strict-ish on our own code, but lenient on
+# untyped third-party shell-out helpers. The goal is to catch obvious
+# bugs without forcing every line of legacy code to be fully typed
+# before the first refactor pass.
+# ---------------------------------------------------------------------------
+
+[tool.mypy]
+python_version = "3.9"
+files = ["macmanager", "tests", "scripts"]
+strict_optional = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_no_return = true
+warn_unreachable = true
+no_implicit_reexport = true
+check_untyped_defs = true
+disallow_untyped_decorators = false  # @cached uses Callable[..., T]; needs ParamSpec to fully type — TODO when we drop Py3.9
+ignore_missing_imports = false
+follow_imports = "normal"
+show_error_codes = true
+pretty = true
+
+# Per-module relaxations: Rich and psutil have stubs, but the project
+# wraps a lot of shell commands and dynamic dataclasses where strict
+# typing buys little.
+[[tool.mypy.overrides]]
+module = ["rich.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["macmanager.cache"]
+disallow_untyped_decorators = false
+
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+disallow_untyped_decorators = false
+check_untyped_defs = true
 
 [tool.hatch.build.targets.sdist]
 include = [

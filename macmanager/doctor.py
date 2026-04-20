@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import cast
+
 from rich.panel import Panel
 from rich.table import Table
 
@@ -123,8 +125,8 @@ def doctor() -> dict:
             }
         )
 
-    total = sum(c["score"] for c in checks)
-    max_total = sum(c["max"] for c in checks)
+    total = sum(cast(int, c["score"]) for c in checks)
+    max_total = sum(cast(int, c["max"]) for c in checks)
     pct = (total / max_total) * 100 if max_total else 0
 
     return {"score": pct, "checks": checks, "battery": bat, "system": sys, "disk": disk}

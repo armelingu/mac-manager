@@ -4,6 +4,7 @@
 
 [![Lint](https://github.com/armelingu/mac-manager/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/armelingu/mac-manager/actions/workflows/lint.yml)
 [![Tests](https://github.com/armelingu/mac-manager/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/armelingu/mac-manager/actions/workflows/test.yml)
+[![Type check](https://github.com/armelingu/mac-manager/actions/workflows/typecheck.yml/badge.svg?branch=main)](https://github.com/armelingu/mac-manager/actions/workflows/typecheck.yml)
 [![CodeQL](https://github.com/armelingu/mac-manager/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/armelingu/mac-manager/actions/workflows/codeql.yml)
 [![PyPI](https://img.shields.io/pypi/v/mac-manager.svg)](https://pypi.org/project/mac-manager/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)

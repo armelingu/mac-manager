@@ -85,6 +85,14 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
 - README's "Installation" section now showcases three install paths:
   Homebrew (recommended once released), pip/pipx (once on PyPI) and
   the existing `./install.sh` source flow (works today).
+- **Mypy** static type checking enabled with a pragmatic strict-ish
+  config: `strict_optional`, `warn_unreachable`, `warn_redundant_casts`,
+  `check_untyped_defs`, `no_implicit_reexport`. Codebase is currently
+  clean — no `# type: ignore` of any kind. Per-module overrides relax
+  the few legitimately dynamic spots (`@cached`, tests).
+- **Type check** workflow runs mypy on Python 3.9 and 3.13 (range
+  floor and ceiling) on every push and pull request.
+- README gains a Type check status badge.
 
 ---
 
