@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import os
-import re
 import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -15,7 +14,6 @@ from rich.table import Table
 
 from macmanager.cache import cached
 from macmanager.ui import bar, console, fmt_bytes, usage_color
-
 
 CLEAN_TARGETS = [
     "~/Library/Caches",
@@ -46,7 +44,10 @@ def _du(path: str, timeout: int = 10) -> Optional[int]:
     try:
         out = subprocess.run(
             ["du", "-sk", path],
-            capture_output=True, text=True, timeout=timeout, check=False,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+            check=False,
         ).stdout.strip()
         if not out:
             return None
@@ -60,11 +61,14 @@ def _snapshots() -> list[str]:
     try:
         out = subprocess.run(
             ["tmutil", "listlocalsnapshots", "/"],
-            capture_output=True, text=True, timeout=5, check=False,
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
         ).stdout
     except Exception:
         return []
-    return [l.strip() for l in out.splitlines() if l.strip().startswith("com.apple")]
+    return [line.strip() for line in out.splitlines() if line.strip().startswith("com.apple")]
 
 
 @cached(ttl=30)

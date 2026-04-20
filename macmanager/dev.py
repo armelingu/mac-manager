@@ -53,7 +53,10 @@ def _probe(tool: Tool) -> Tool:
     try:
         p = subprocess.run(
             [tool.cmd, *tool.version_args],
-            capture_output=True, text=True, timeout=4, check=False,
+            capture_output=True,
+            text=True,
+            timeout=4,
+            check=False,
         )
         out = (p.stdout + " " + p.stderr).strip()
         out_lower = out.lower()
@@ -88,87 +91,107 @@ GROUPS: dict[str, list[Tool]] = {
         _t("Rust", "rustc"),
         _t("Java", "java", version_args=("-version",)),
         _t("Kotlin", "kotlin", version_args=("-version",)),
-        _t("Swift", "swift", version_args=("--version",),
-           version_regex=r"Swift version (\d+\.\d+(?:\.\d+)?)"),
+        _t(
+            "Swift",
+            "swift",
+            version_args=("--version",),
+            version_regex=r"Swift version (\d+\.\d+(?:\.\d+)?)",
+        ),
         _t("PHP", "php"),
         _t("Elixir", "elixir"),
-        _t("Erlang", "erl", version_args=("-eval", "erlang:display(erlang:system_info(otp_release)), halt().", "-noshell"),
-           version_regex=r'"?(\d+(?:\.\d+)?)'),
+        _t(
+            "Erlang",
+            "erl",
+            version_args=(
+                "-eval",
+                "erlang:display(erlang:system_info(otp_release)), halt().",
+                "-noshell",
+            ),
+            version_regex=r'"?(\d+(?:\.\d+)?)',
+        ),
         _t("Lua", "lua", version_args=("-v",)),
         _t("Perl", "perl", version_args=("-v",)),
         _t("Zig", "zig", version_args=("version",)),
     ],
     "Version managers": [
-        _t("nvm",   "nvm"),
-        _t("fnm",   "fnm"),
+        _t("nvm", "nvm"),
+        _t("fnm", "fnm"),
         _t("volta", "volta"),
         _t("pyenv", "pyenv"),
         _t("rbenv", "rbenv"),
-        _t("asdf",  "asdf"),
-        _t("mise",  "mise"),
+        _t("asdf", "asdf"),
+        _t("mise", "mise"),
     ],
     "Package managers": [
         _t("Homebrew", "brew"),
-        _t("npm",      "npm"),
-        _t("pnpm",     "pnpm"),
-        _t("yarn",     "yarn"),
-        _t("pip",      "pip3"),
-        _t("pipx",     "pipx"),
-        _t("poetry",   "poetry"),
-        _t("uv",       "uv"),
-        _t("cargo",    "cargo"),
-        _t("gem",      "gem"),
+        _t("npm", "npm"),
+        _t("pnpm", "pnpm"),
+        _t("yarn", "yarn"),
+        _t("pip", "pip3"),
+        _t("pipx", "pipx"),
+        _t("poetry", "poetry"),
+        _t("uv", "uv"),
+        _t("cargo", "cargo"),
+        _t("gem", "gem"),
         _t("composer", "composer"),
-        _t("mas",      "mas"),
+        _t("mas", "mas"),
     ],
     "DevOps / Infra": [
-        _t("Docker",     "docker"),
-        _t("Podman",     "podman"),
-        _t("Colima",     "colima"),
-        _t("kubectl",    "kubectl", version_args=("version", "--client", "--short"),
-           version_regex=r"v?(\d+\.\d+(?:\.\d+)?)"),
-        _t("Helm",       "helm"),
-        _t("Terraform",  "terraform"),
-        _t("Pulumi",     "pulumi"),
-        _t("Ansible",    "ansible"),
-        _t("AWS CLI",    "aws"),
-        _t("gcloud",     "gcloud"),
-        _t("Azure CLI",  "az"),
+        _t("Docker", "docker"),
+        _t("Podman", "podman"),
+        _t("Colima", "colima"),
+        _t(
+            "kubectl",
+            "kubectl",
+            version_args=("version", "--client", "--short"),
+            version_regex=r"v?(\d+\.\d+(?:\.\d+)?)",
+        ),
+        _t("Helm", "helm"),
+        _t("Terraform", "terraform"),
+        _t("Pulumi", "pulumi"),
+        _t("Ansible", "ansible"),
+        _t("AWS CLI", "aws"),
+        _t("gcloud", "gcloud"),
+        _t("Azure CLI", "az"),
         _t("Vercel CLI", "vercel"),
-        _t("Netlify CLI","netlify"),
-        _t("Fly.io",     "flyctl"),
+        _t("Netlify CLI", "netlify"),
+        _t("Fly.io", "flyctl"),
     ],
     "Git & GitHub": [
-        _t("git",       "git"),
-        _t("gh",        "gh"),
-        _t("git-lfs",   "git-lfs"),
-        _t("pre-commit","pre-commit"),
+        _t("git", "git"),
+        _t("gh", "gh"),
+        _t("git-lfs", "git-lfs"),
+        _t("pre-commit", "pre-commit"),
     ],
     "Editors / IDEs": [
-        _t("VS Code",   "code"),
-        _t("Cursor",    "cursor"),
-        _t("Sublime",   "subl"),
-        _t("Neovim",    "nvim"),
-        _t("Vim",       "vim", version_args=("--version",)),
-        _t("Emacs",     "emacs"),
-        _t("Xcode CLT", "xcode-select", version_args=("-v",),
-           version_regex=r"version\s+(\d+(?:\.\d+)?)"),
+        _t("VS Code", "code"),
+        _t("Cursor", "cursor"),
+        _t("Sublime", "subl"),
+        _t("Neovim", "nvim"),
+        _t("Vim", "vim", version_args=("--version",)),
+        _t("Emacs", "emacs"),
+        _t(
+            "Xcode CLT",
+            "xcode-select",
+            version_args=("-v",),
+            version_regex=r"version\s+(\d+(?:\.\d+)?)",
+        ),
     ],
     "CLI utilities": [
-        _t("tmux",     "tmux", version_args=("-V",)),
-        _t("jq",       "jq",   version_args=("--version",), version_regex=r"jq-(\d+\.\d+)"),
-        _t("ripgrep",  "rg"),
-        _t("fzf",      "fzf"),
-        _t("bat",      "bat"),
-        _t("eza",      "eza"),
-        _t("fd",       "fd"),
-        _t("htop",     "htop"),
-        _t("btop",     "btop"),
-        _t("zoxide",   "zoxide"),
+        _t("tmux", "tmux", version_args=("-V",)),
+        _t("jq", "jq", version_args=("--version",), version_regex=r"jq-(\d+\.\d+)"),
+        _t("ripgrep", "rg"),
+        _t("fzf", "fzf"),
+        _t("bat", "bat"),
+        _t("eza", "eza"),
+        _t("fd", "fd"),
+        _t("htop", "htop"),
+        _t("btop", "btop"),
+        _t("zoxide", "zoxide"),
         _t("starship", "starship"),
     ],
     "Shells": [
-        _t("zsh",  "zsh"),
+        _t("zsh", "zsh"),
         _t("bash", "bash"),
         _t("fish", "fish"),
     ],
@@ -194,11 +217,15 @@ def _git_identity() -> Optional[str]:
     try:
         name = subprocess.run(
             ["git", "config", "--global", "user.name"],
-            capture_output=True, text=True, timeout=2,
+            capture_output=True,
+            text=True,
+            timeout=2,
         ).stdout.strip()
         email = subprocess.run(
             ["git", "config", "--global", "user.email"],
-            capture_output=True, text=True, timeout=2,
+            capture_output=True,
+            text=True,
+            timeout=2,
         ).stdout.strip()
         if name or email:
             return f"{name} <{email}>" if email else name
@@ -207,8 +234,9 @@ def _git_identity() -> Optional[str]:
     return None
 
 
-def render_dev_panels(data: Optional[dict[str, list[Tool]]] = None,
-                      show_missing: bool = False) -> list[Panel]:
+def render_dev_panels(
+    data: Optional[dict[str, list[Tool]]] = None, show_missing: bool = False
+) -> list[Panel]:
     data = data or collect()
     panels: list[Panel] = []
 
@@ -259,15 +287,19 @@ def cmd_dev(args=None) -> None:
 
 # ---------- subcommand: outdated check ----------
 
+
 def _outdated_brew() -> list[str]:
     if not shutil.which("brew"):
         return []
     try:
         p = subprocess.run(
             ["brew", "outdated", "--quiet"],
-            capture_output=True, text=True, timeout=30, check=False,
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
         )
-        return [l for l in p.stdout.splitlines() if l.strip()]
+        return [line for line in p.stdout.splitlines() if line.strip()]
     except Exception:
         return []
 
@@ -278,7 +310,10 @@ def _outdated_npm_global() -> list[str]:
     try:
         p = subprocess.run(
             ["npm", "outdated", "-g", "--parseable"],
-            capture_output=True, text=True, timeout=30, check=False,
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
         )
         names = []
         for line in p.stdout.splitlines():
@@ -296,10 +331,13 @@ def _outdated_pip() -> list[str]:
     try:
         p = subprocess.run(
             ["pip3", "list", "--outdated", "--format=columns"],
-            capture_output=True, text=True, timeout=30, check=False,
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
         )
         lines = p.stdout.splitlines()[2:]
-        return [l.split()[0] for l in lines if l.strip()]
+        return [line.split()[0] for line in lines if line.strip()]
     except Exception:
         return []
 
@@ -310,9 +348,12 @@ def _outdated_mas() -> list[str]:
     try:
         p = subprocess.run(
             ["mas", "outdated"],
-            capture_output=True, text=True, timeout=15, check=False,
+            capture_output=True,
+            text=True,
+            timeout=15,
+            check=False,
         )
-        return [l for l in p.stdout.splitlines() if l.strip()]
+        return [line for line in p.stdout.splitlines() if line.strip()]
     except Exception:
         return []
 

@@ -13,12 +13,10 @@ from __future__ import annotations
 
 import json
 import time
-from pathlib import Path
 
 from macmanager.battery import get_battery
 from macmanager.logger import ALERT_STATE, LOGS_DIR
 from macmanager.notify import notify
-
 
 HIGH = 80
 LOW = 20
@@ -26,10 +24,10 @@ CRITICAL = 10
 HEALTH_WARN = 80
 
 COOLDOWNS = {
-    "high": 60 * 60 * 2,        # 2h between "unplug" reminders
-    "low": 60 * 30,             # 30min between "plug in" reminders
-    "critical": 60 * 10,        # 10min in critical mode
-    "health": 60 * 60 * 24 * 7, # 1x per week
+    "high": 60 * 60 * 2,  # 2h between "unplug" reminders
+    "low": 60 * 30,  # 30min between "plug in" reminders
+    "critical": 60 * 10,  # 10min in critical mode
+    "health": 60 * 60 * 24 * 7,  # 1x per week
 }
 
 
@@ -86,8 +84,11 @@ def check_and_alert() -> list[str]:
             state["low"] = time.time()
             fired.append("low")
 
-    if bat.health_percent and bat.health_percent < HEALTH_WARN and \
-            _can_fire(state, "health", COOLDOWNS["health"]):
+    if (
+        bat.health_percent
+        and bat.health_percent < HEALTH_WARN
+        and _can_fire(state, "health", COOLDOWNS["health"])
+    ):
         notify(
             f"Battery health at {bat.health_percent:.0f}%. "
             f"Cycles: {bat.cycle_count}. Consider servicing it.",

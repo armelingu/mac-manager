@@ -14,6 +14,7 @@ blocking the redraw — see `macmanager.cache`.
 
 from __future__ import annotations
 
+import contextlib
 import threading
 import time
 from datetime import datetime
@@ -30,7 +31,8 @@ from macmanager.cache import is_miss, peek
 from macmanager.disk import render_disk_panel
 from macmanager.doctor import doctor as run_doctor
 from macmanager.network import render_network_panel
-from macmanager.security import check_macos_updates, run_all as run_security
+from macmanager.security import check_macos_updates
+from macmanager.security import run_all as run_security
 from macmanager.system import render_system_panel
 from macmanager.ui import console, health_color
 
@@ -127,8 +129,7 @@ def _render(layout: Layout) -> Layout:
     layout["network"].update(render_network_panel())
     layout["health"].update(_render_health_bar())
     layout["footer"].update(
-        Align.center(Text("Press Ctrl+C to exit  ·  health bar refreshes every ~5min",
-                          style="dim"))
+        Align.center(Text("Press Ctrl+C to exit  ·  health bar refreshes every ~5min", style="dim"))
     )
     return layout
 
@@ -139,11 +140,11 @@ _HEAVY_COLLECTORS = (run_doctor, run_security, check_macos_updates)
 def _warm_cache_background() -> None:
     """Pre-warms heavy collections in parallel. Each one populates its own cache.
     Errors are silenced — render uses "?" fallback if it fails."""
+
     def _safe(fn):
-        try:
+        with contextlib.suppress(Exception):
             fn()
-        except Exception:
-            pass
+
     for fn in _HEAVY_COLLECTORS:
         threading.Thread(target=_safe, args=(fn,), daemon=True).start()
 

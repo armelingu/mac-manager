@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
+import contextlib
 import re
-import socket
 import subprocess
 import urllib.request
 from dataclasses import dataclass
@@ -23,17 +23,19 @@ class NetworkInfo:
     public_ip: Optional[str]
     ssid: Optional[str]
     bssid: Optional[str]
-    rssi: Optional[int]            # dBm (negative)
+    rssi: Optional[int]  # dBm (negative)
     noise: Optional[int]
     channel: Optional[str]
-    tx_rate: Optional[str]         # Mbps
+    tx_rate: Optional[str]  # Mbps
     security: Optional[str]
 
 
 def _local_ip(iface: str = "en0") -> Optional[str]:
     out = subprocess.run(
         ["ipconfig", "getifaddr", iface],
-        capture_output=True, text=True, check=False,
+        capture_output=True,
+        text=True,
+        check=False,
     ).stdout.strip()
     return out or None
 
@@ -57,7 +59,10 @@ def _wifi_info() -> dict:
 
     out = subprocess.run(
         ["/usr/sbin/system_profiler", "SPAirPortDataType"],
-        capture_output=True, text=True, check=False, timeout=5,
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=5,
     ).stdout
 
     cur = re.search(r"Current Network Information:\s*\n\s*([^\n]+):", out)
@@ -66,7 +71,8 @@ def _wifi_info() -> dict:
 
     block = re.search(
         r"Current Network Information:.*?(?=\n\s{6}\w|\Z)",
-        out, re.DOTALL,
+        out,
+        re.DOTALL,
     )
     if block:
         b = block.group(0)
@@ -82,10 +88,8 @@ def _wifi_info() -> dict:
             if m:
                 val = m.group(1).strip()
                 if key in ("rssi", "noise"):
-                    try:
+                    with contextlib.suppress(ValueError):
                         data[key] = int(val)
-                    except ValueError:
-                        pass
                 else:
                     data[key] = val
 

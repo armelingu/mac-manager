@@ -24,6 +24,7 @@ def cached(ttl: float):
 
     Use ttl=0 to disable the cache (useful in tests).
     """
+
     def deco(fn: Callable[..., T]) -> Callable[..., T]:
         key_fn = (fn.__module__, fn.__qualname__)
 
@@ -46,6 +47,7 @@ def cached(ttl: float):
 
         wrapper.cache_clear = lambda: _clear_for(key_fn)  # type: ignore[attr-defined]
         return wrapper
+
     return deco
 
 

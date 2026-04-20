@@ -7,9 +7,7 @@ from datetime import datetime
 from pathlib import Path
 
 from macmanager.battery import get_battery
-from macmanager.system import get_system
 from macmanager.ui import console
-
 
 LOGS_DIR = Path(__file__).resolve().parent.parent / "logs"
 BATTERY_CSV = LOGS_DIR / "battery.csv"
@@ -69,6 +67,7 @@ def cmd_log(args=None) -> None:
 def cmd_history(args=None) -> None:
     """Shows the last N entries from the CSV."""
     from rich.table import Table
+
     if not BATTERY_CSV.exists():
         console.print("[yellow]No history yet. Run `mm log` or wait for launchd.[/]")
         return

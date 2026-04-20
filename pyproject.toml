@@ -88,6 +88,38 @@ path = "macmanager/__init__.py"
 [tool.hatch.build.targets.wheel]
 packages = ["macmanager"]
 
+# ---------------------------------------------------------------------------
+# Ruff (lint + format). Refined further in phase 5.1.
+# ---------------------------------------------------------------------------
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+extend-exclude = [".venv", "build", "dist", "logs", "launchd"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "W",   # pycodestyle warnings
+    "I",   # isort
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "SIM", # flake8-simplify
+]
+ignore = [
+    "E501",  # line-too-long (handled by formatter; keep pragmatic)
+    "B008",  # function-call-in-default-arg (common, pragmatic)
+    "UP007", # non-pep604-annotation-union: project still supports Python 3.9
+    "UP045", # non-pep604-annotation-optional: project still supports Python 3.9
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+
 [tool.hatch.build.targets.sdist]
 include = [
     "macmanager/**",

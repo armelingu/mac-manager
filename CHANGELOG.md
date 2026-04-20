@@ -38,6 +38,10 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
   `tool.hatch.version`, keeping a single source of truth.
 - `.gitignore` hardened to cover `build/`, `dist/`, `*.egg-info/`, and
   the caches produced by `pytest`, `mypy` and `ruff`.
+- Code base is now lint-clean against Ruff's baseline rule set
+  (`E`, `F`, `W`, `I`, `UP`, `B`, `C4`, `SIM`) and formatted with
+  `ruff format` (100-col, double quotes) — configured under
+  `[tool.ruff]` in `pyproject.toml`.
 
 ---
 

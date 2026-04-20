@@ -7,7 +7,6 @@ Each check becomes a row with status OK/WARN/FAIL and yields a 0-100 score at th
 
 from __future__ import annotations
 
-import os
 import re
 import subprocess
 from dataclasses import dataclass
@@ -20,11 +19,10 @@ from rich.table import Table
 from macmanager.cache import cached
 from macmanager.ui import console, fmt_seconds, health_color
 
-
 OK, WARN, FAIL, INFO = "OK", "WARN", "FAIL", "INFO"
 
 STATUS_STYLE = {
-    OK:   "[green]OK  [/]",
+    OK: "[green]OK  [/]",
     WARN: "[yellow]WARN[/]",
     FAIL: "[red]FAIL[/]",
     INFO: "[dim]INFO[/]",
@@ -53,12 +51,14 @@ def _run(cmd: list[str], timeout: int = 5) -> tuple[int, str, str]:
 def check_filevault() -> Check:
     rc, out, _ = _run(["fdesetup", "status"])
     if rc != 0:
-        return Check("FileVault", WARN, "could not query", 3,
-                    "Run `sudo fdesetup status` for details.")
+        return Check(
+            "FileVault", WARN, "could not query", 3, "Run `sudo fdesetup status` for details."
+        )
     if "FileVault is On" in out:
         return Check("FileVault", OK, "active", 3)
-    return Check("FileVault", FAIL, "DISABLED", 3,
-                "Enable in Settings > Privacy & Security > FileVault.")
+    return Check(
+        "FileVault", FAIL, "DISABLED", 3, "Enable in Settings > Privacy & Security > FileVault."
+    )
 
 
 def check_firewall() -> Check:
@@ -71,17 +71,18 @@ def check_firewall() -> Check:
             if "enabled" in text:
                 return Check("Firewall", OK, "active", 2)
             if "disabled" in text:
-                return Check("Firewall", FAIL, "disabled", 2,
-                            "Enable in Settings > Network > Firewall.")
+                return Check(
+                    "Firewall", FAIL, "disabled", 2, "Enable in Settings > Network > Firewall."
+                )
 
-    rc, out, _ = _run(["defaults", "read",
-                       "/Library/Preferences/com.apple.alf", "globalstate"])
+    rc, out, _ = _run(["defaults", "read", "/Library/Preferences/com.apple.alf", "globalstate"])
     if rc != 0:
-        return Check("Firewall", WARN, "requires permission; check in Settings > Network > Firewall", 2)
+        return Check(
+            "Firewall", WARN, "requires permission; check in Settings > Network > Firewall", 2
+        )
     state = out.strip()
     if state == "0":
-        return Check("Firewall", FAIL, "disabled", 2,
-                    "Enable in Settings > Network > Firewall.")
+        return Check("Firewall", FAIL, "disabled", 2, "Enable in Settings > Network > Firewall.")
     if state in ("1", "2"):
         suffix = " (signed connections only)" if state == "2" else ""
         return Check("Firewall", OK, f"active{suffix}", 2)
@@ -94,8 +95,7 @@ def check_sip() -> Check:
         return Check("SIP", WARN, "could not query", 3)
     if "enabled" in out.lower():
         return Check("SIP", OK, "active (System Integrity Protection)", 3)
-    return Check("SIP", FAIL, "DISABLED", 3,
-                "Re-enable in recovery mode: `csrutil enable`.")
+    return Check("SIP", FAIL, "DISABLED", 3, "Re-enable in recovery mode: `csrutil enable`.")
 
 
 def check_gatekeeper() -> Check:
@@ -104,8 +104,7 @@ def check_gatekeeper() -> Check:
         return Check("Gatekeeper", WARN, "could not query", 2)
     if "assessments enabled" in out:
         return Check("Gatekeeper", OK, "active", 2)
-    return Check("Gatekeeper", FAIL, "DISABLED", 2,
-                "Re-enable with `sudo spctl --master-enable`.")
+    return Check("Gatekeeper", FAIL, "DISABLED", 2, "Re-enable with `sudo spctl --master-enable`.")
 
 
 def check_macos_version() -> Check:
@@ -115,11 +114,16 @@ def check_macos_version() -> Check:
     name = re.search(r"ProductName:\s*(.+)", out)
     ver = re.search(r"ProductVersion:\s*(.+)", out)
     build = re.search(r"BuildVersion:\s*(.+)", out)
-    label = " ".join(filter(None, [
-        name.group(1).strip() if name else "",
-        ver.group(1).strip() if ver else "",
-        f"({build.group(1).strip()})" if build else "",
-    ]))
+    label = " ".join(
+        filter(
+            None,
+            [
+                name.group(1).strip() if name else "",
+                ver.group(1).strip() if ver else "",
+                f"({build.group(1).strip()})" if build else "",
+            ],
+        )
+    )
     return Check("macOS version", INFO, label, 0)
 
 
@@ -146,22 +150,36 @@ def check_macos_updates() -> Check:
     if items:
         first = items[0]
         more = f" (+{len(items) - 1} more)" if len(items) > 1 else ""
-        return Check("Pending updates", WARN,
-                     f"{len(items)} pending: {first}{more}", 2,
-                     "Update in Settings > General > Software Update.")
+        return Check(
+            "Pending updates",
+            WARN,
+            f"{len(items)} pending: {first}{more}",
+            2,
+            "Update in Settings > General > Software Update.",
+        )
     return Check("Pending updates", OK, "none detected", 2)
 
 
 def check_auto_updates() -> Check:
     """May require permission; we try `softwareupdate --schedule` as fallback."""
-    rc, out, _ = _run(["defaults", "read",
-                       "/Library/Preferences/com.apple.SoftwareUpdate",
-                       "AutomaticCheckEnabled"])
+    rc, out, _ = _run(
+        [
+            "defaults",
+            "read",
+            "/Library/Preferences/com.apple.SoftwareUpdate",
+            "AutomaticCheckEnabled",
+        ]
+    )
     if rc == 0 and out.strip() in ("0", "1"):
         if out.strip() == "1":
             return Check("Automatic check", OK, "enabled", 1)
-        return Check("Automatic check", WARN, "disabled", 1,
-                    "Enable in Settings > General > Software Update.")
+        return Check(
+            "Automatic check",
+            WARN,
+            "disabled",
+            1,
+            "Enable in Settings > General > Software Update.",
+        )
 
     rc, out, _ = _run(["softwareupdate", "--schedule"])
     if rc == 0 and out:
@@ -169,8 +187,13 @@ def check_auto_updates() -> Check:
         if "is on" in text or "automatic check is on" in text:
             return Check("Automatic check", OK, "enabled", 1)
         if "is off" in text:
-            return Check("Automatic check", WARN, "disabled", 1,
-                        "Enable in Settings > General > Software Update.")
+            return Check(
+                "Automatic check",
+                WARN,
+                "disabled",
+                1,
+                "Enable in Settings > General > Software Update.",
+            )
 
     return Check("Automatic check", WARN, "requires permission; check in Settings", 1)
 
@@ -197,6 +220,7 @@ def check_uptime() -> Check:
     if not m:
         return Check("Time since last reboot", WARN, "—", 1)
     import time
+
     boot = int(m.group(1))
     up = int(time.time() - boot)
     days = up / 86400
@@ -204,10 +228,16 @@ def check_uptime() -> Check:
     if days < 7:
         return Check("Time since last reboot", OK, label, 1)
     if days < 21:
-        return Check("Time since last reboot", WARN, label, 1,
-                    "Reboot to apply pending kernel updates.")
-    return Check("Time since last reboot", FAIL, label, 1,
-                "More than 3 weeks without rebooting — risk of unapplied updates.")
+        return Check(
+            "Time since last reboot", WARN, label, 1, "Reboot to apply pending kernel updates."
+        )
+    return Check(
+        "Time since last reboot",
+        FAIL,
+        label,
+        1,
+        "More than 3 weeks without rebooting — risk of unapplied updates.",
+    )
 
 
 def check_login_items() -> Check:
@@ -231,8 +261,13 @@ def check_login_items() -> Check:
         status = WARN
     else:
         status = WARN
-    return Check("LaunchAgents (login)", status, label, 1,
-                "List with `ls ~/Library/LaunchAgents /Library/LaunchAgents`.")
+    return Check(
+        "LaunchAgents (login)",
+        status,
+        label,
+        1,
+        "List with `ls ~/Library/LaunchAgents /Library/LaunchAgents`.",
+    )
 
 
 def check_remote_login() -> Check:
@@ -241,8 +276,13 @@ def check_remote_login() -> Check:
     if rc != 0:
         return Check("Remote SSH", INFO, "—", 0)
     if "On" in out:
-        return Check("Remote SSH", WARN, "enabled", 1,
-                    "Disable if you don't use it: `sudo systemsetup -setremotelogin off`.")
+        return Check(
+            "Remote SSH",
+            WARN,
+            "enabled",
+            1,
+            "Disable if you don't use it: `sudo systemsetup -setremotelogin off`.",
+        )
     return Check("Remote SSH", OK, "disabled", 1)
 
 
@@ -270,8 +310,7 @@ def render_security_panel(checks: Optional[list[Check]] = None) -> Panel:
     checks = checks or run_all()
 
     weighted_total = sum(c.weight for c in checks if c.weight > 0)
-    weighted_score = sum(STATUS_SCORE.get(c.status, 0) * c.weight
-                         for c in checks if c.weight > 0)
+    weighted_score = sum(STATUS_SCORE.get(c.status, 0) * c.weight for c in checks if c.weight > 0)
     score = (weighted_score / weighted_total) * 100 if weighted_total else 0
     color = health_color(score, good=85, warn=65)
 

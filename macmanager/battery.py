@@ -16,14 +16,14 @@ from macmanager.ui import bar, console, fmt_seconds, health_color, usage_color
 
 @dataclass
 class BatteryInfo:
-    percent: float                    # 0-100
+    percent: float  # 0-100
     is_charging: bool
-    power_source: str                 # "AC Power" | "Battery Power"
-    time_remaining_sec: Optional[int] # remaining time (discharge or until full)
+    power_source: str  # "AC Power" | "Battery Power"
+    time_remaining_sec: Optional[int]  # remaining time (discharge or until full)
     cycle_count: int
     max_capacity_mah: int
     design_capacity_mah: int
-    health_percent: float             # max / design * 100
+    health_percent: float  # max / design * 100
     temperature_c: Optional[float]
     fully_charged: bool
     serial: Optional[str]
@@ -58,7 +58,8 @@ def _parse_ioreg() -> dict:
     for key in _IOREG_KEYS:
         m = re.search(
             rf'^\s*"{key}"\s+=\s+(.+?)\s*$',
-            raw, flags=re.MULTILINE,
+            raw,
+            flags=re.MULTILINE,
         )
         if not m:
             continue
@@ -120,10 +121,7 @@ def get_battery() -> BatteryInfo:
     else:
         percent = 0.0
 
-    if raw_max and design:
-        health = (raw_max / design) * 100.0
-    else:
-        health = 0.0
+    health = (raw_max / design) * 100.0 if raw_max and design else 0.0
 
     temp = io.get("Temperature")
     temp_c = (temp / 100.0) if isinstance(temp, int) else None
@@ -161,18 +159,21 @@ def render_battery_panel(info: Optional[BatteryInfo] = None) -> Panel:
     elif info.percent <= 40:
         pct_color = "yellow"
 
-    state = "Charging" if info.is_charging else (
-        "Full" if info.fully_charged else "Discharging"
-    )
+    state = "Charging" if info.is_charging else ("Full" if info.fully_charged else "Discharging")
 
     t = Table.grid(padding=(0, 1))
     t.add_column(justify="right", style="dim")
     t.add_column()
 
-    t.add_row("Charge", f"[{pct_color}]{info.percent:.1f}%[/]  {bar(info.percent, color=pct_color)}")
+    t.add_row(
+        "Charge", f"[{pct_color}]{info.percent:.1f}%[/]  {bar(info.percent, color=pct_color)}"
+    )
     t.add_row("State", f"{state}  · source: [bold]{info.power_source}[/]")
-    if info.time_remaining_sec is not None and info.time_remaining_sec > 0 \
-            and not info.fully_charged:
+    if (
+        info.time_remaining_sec is not None
+        and info.time_remaining_sec > 0
+        and not info.fully_charged
+    ):
         label = "Time to full" if info.is_charging else "Time remaining"
         t.add_row(label, fmt_seconds(info.time_remaining_sec))
 

@@ -28,7 +28,7 @@ class SystemInfo:
     memory_percent: float
     swap_used: int
     swap_total: int
-    memory_pressure: str           # Normal | Warn | Critical | Unknown
+    memory_pressure: str  # Normal | Warn | Critical | Unknown
     uptime_sec: int
     top_processes: list[dict]
 
@@ -38,7 +38,9 @@ def _memory_pressure() -> str:
     try:
         out = subprocess.run(
             ["memory_pressure"],
-            capture_output=True, text=True, timeout=2,
+            capture_output=True,
+            text=True,
+            timeout=2,
         ).stdout
     except Exception:
         return "Unknown"
@@ -58,12 +60,14 @@ def _top_processes(limit: int = 5) -> list[dict]:
     procs = []
     for p in psutil.process_iter(["pid", "name", "cpu_percent", "memory_info"]):
         try:
-            procs.append({
-                "pid": p.info["pid"],
-                "name": p.info["name"] or "—",
-                "cpu": p.info["cpu_percent"] or 0.0,
-                "mem": (p.info["memory_info"].rss if p.info["memory_info"] else 0),
-            })
+            procs.append(
+                {
+                    "pid": p.info["pid"],
+                    "name": p.info["name"] or "—",
+                    "cpu": p.info["cpu_percent"] or 0.0,
+                    "mem": (p.info["memory_info"].rss if p.info["memory_info"] else 0),
+                }
+            )
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             continue
     procs.sort(key=lambda x: (x["cpu"], x["mem"]), reverse=True)
@@ -86,7 +90,9 @@ def get_system(quick: bool = False) -> SystemInfo:
 
     return SystemInfo(
         cpu_percent=cpu,
-        load_avg_1=l1, load_avg_5=l5, load_avg_15=l15,
+        load_avg_1=l1,
+        load_avg_5=l5,
+        load_avg_15=l15,
         cpu_count=psutil.cpu_count(logical=True) or 0,
         memory_total=vm.total,
         memory_used=vm.total - vm.available,
