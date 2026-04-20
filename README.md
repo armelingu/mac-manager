@@ -2,6 +2,8 @@
 
 > Monitor your Mac's health, security and hardware from the terminal — battery alerts, live dashboard, security audit and dev-tooling inventory.
 
+[![Lint](https://github.com/armelingu/mac-manager/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/armelingu/mac-manager/actions/workflows/lint.yml)
+[![Tests](https://github.com/armelingu/mac-manager/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/armelingu/mac-manager/actions/workflows/test.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
 [![Platform: macOS](https://img.shields.io/badge/platform-macOS-lightgrey.svg)](https://www.apple.com/macos/)

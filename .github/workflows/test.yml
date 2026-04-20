@@ -1,0 +1,63 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pytest:
+    name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install project + test extras
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Show interpreter and pytest version
+        run: |
+          python -V
+          pytest --version
+
+      - name: Run pytest (with coverage on Python 3.12 / Ubuntu)
+        if: matrix.python-version == '3.12' && matrix.os == 'ubuntu-latest'
+        run: pytest --cov=macmanager --cov-report=xml --cov-report=term-missing
+
+      - name: Run pytest
+        if: matrix.python-version != '3.12' || matrix.os != 'ubuntu-latest'
+        run: pytest
+
+      - name: Upload coverage artifact
+        if: matrix.python-version == '3.12' && matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: coverage.xml
+          if-no-files-found: ignore
+          retention-days: 14

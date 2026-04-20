@@ -120,6 +120,43 @@ quote-style = "double"
 indent-style = "space"
 skip-magic-trailing-comma = false
 
+# ---------------------------------------------------------------------------
+# Pytest
+# ---------------------------------------------------------------------------
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+    "--showlocals",
+]
+filterwarnings = [
+    "error",
+    "ignore::DeprecationWarning:psutil.*",
+]
+xfail_strict = true
+
+# ---------------------------------------------------------------------------
+# Coverage (opt-in, activated via `pytest --cov=macmanager`)
+# ---------------------------------------------------------------------------
+
+[tool.coverage.run]
+source = ["macmanager"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
+
 [tool.hatch.build.targets.sdist]
 include = [
     "macmanager/**",

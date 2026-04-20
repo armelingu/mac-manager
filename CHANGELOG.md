@@ -42,6 +42,16 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
   (`E`, `F`, `W`, `I`, `UP`, `B`, `C4`, `SIM`) and formatted with
   `ruff format` (100-col, double quotes) — configured under
   `[tool.ruff]` in `pyproject.toml`.
+- GitHub Actions: **Lint** workflow running `ruff check` and
+  `ruff format --check` on every push and pull request.
+- GitHub Actions: **Tests** workflow running `pytest` on a matrix of
+  Python 3.9 / 3.10 / 3.11 / 3.12 / 3.13 across macOS and Ubuntu, with
+  coverage collected on Python 3.12 + Ubuntu and uploaded as an
+  artifact.
+- `tests/test_smoke.py`: initial smoke-test scaffold — asserts
+  `__version__` exists and matches SemVer, every public module imports
+  cleanly, and the CLI parser advertises all 13 subcommands.
+- Lint and Tests status badges at the top of the README.
 
 ---
 
