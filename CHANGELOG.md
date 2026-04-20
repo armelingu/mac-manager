@@ -62,6 +62,13 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
 - `scripts/extract_changelog.py`: small helper that extracts a given
   release's notes from `CHANGELOG.md` using the Keep a Changelog
   header format.
+- **Dependabot**: weekly version updates for GitHub Actions and Python
+  dependencies (Monday 06:00 America/Sao_Paulo), with minor/patch
+  bumps grouped into a single PR per ecosystem and major bumps routed
+  to their own PR for careful review.
+- **CodeQL**: Python security-and-quality analysis on every push and
+  pull request targeting `main`, plus a scheduled weekly scan
+  (Monday 07:00 UTC).
 
 ---
 

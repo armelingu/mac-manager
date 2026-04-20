@@ -1,0 +1,54 @@
+# Dependabot keeps GitHub Actions and Python dependencies up to date.
+# Docs: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+
+updates:
+  # ---------------------------------------------------------------------
+  # GitHub Actions: pin all third-party actions to the latest safe version
+  # every Monday morning (America/Sao_Paulo).
+  # ---------------------------------------------------------------------
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "America/Sao_Paulo"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    groups:
+      actions-minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
+
+  # ---------------------------------------------------------------------
+  # Python (pyproject.toml): same cadence. Minor/patch upgrades are
+  # grouped into a single PR to reduce noise; major bumps ship on their
+  # own so you can review them carefully.
+  # ---------------------------------------------------------------------
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "America/Sao_Paulo"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "python"
+    groups:
+      python-minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
