@@ -69,6 +69,13 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
 - **CodeQL**: Python security-and-quality analysis on every push and
   pull request targeting `main`, plus a scheduled weekly scan
   (Monday 07:00 UTC).
+- **`RELEASING.md`**: maintainer runbook covering SemVer policy, the
+  pre-release checklist, how to enable PyPI Trusted Publishing and how
+  to recover from a botched release.
+- PyPI version badge and CodeQL status badge added to the README; both
+  "light up" automatically once the first release lands.
+- Distribution artifacts (sdist + wheel) validated with `twine check`
+  — both pass strict metadata + README rendering validation.
 
 ---
 

@@ -4,6 +4,8 @@
 
 [![Lint](https://github.com/armelingu/mac-manager/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/armelingu/mac-manager/actions/workflows/lint.yml)
 [![Tests](https://github.com/armelingu/mac-manager/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/armelingu/mac-manager/actions/workflows/test.yml)
+[![CodeQL](https://github.com/armelingu/mac-manager/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/armelingu/mac-manager/actions/workflows/codeql.yml)
+[![PyPI](https://img.shields.io/pypi/v/mac-manager.svg)](https://pypi.org/project/mac-manager/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
 [![Platform: macOS](https://img.shields.io/badge/platform-macOS-lightgrey.svg)](https://www.apple.com/macos/)
@@ -138,6 +140,14 @@ window. Once we ship `1.0.0`, every breaking change will follow
 
 All notable changes are documented in [CHANGELOG.md](./CHANGELOG.md), following
 the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
+
+## Releasing
+
+Maintainers: see [RELEASING.md](./RELEASING.md) for the full release runbook
+(SemVer policy, version bump, tagging and the tag-driven GitHub Actions
+pipeline that builds artifacts and cuts a GitHub Release automatically —
+PyPI publication is wired with Trusted Publishing and can be activated by
+flipping a single flag).
 
 ## Contributing
 
