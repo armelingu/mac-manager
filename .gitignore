@@ -1,7 +1,45 @@
-.venv/
+# --- Python ---
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
+*$py.class
+*.so
+
+# --- Virtual environments ---
+.venv/
+venv/
+env/
+
+# --- Packaging & distribution ---
+build/
+dist/
+*.egg-info/
+*.egg
+wheels/
+pip-wheel-metadata/
+.eggs/
+
+# --- Testing / coverage / type checkers ---
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.pytype/
+
+# --- Editors / IDEs ---
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- macOS ---
 .DS_Store
+
+# --- Project runtime artifacts ---
 logs/*
 !logs/.gitkeep
