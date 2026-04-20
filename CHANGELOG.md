@@ -93,6 +93,18 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
 - **Type check** workflow runs mypy on Python 3.9 and 3.13 (range
   floor and ceiling) on every push and pull request.
 - README gains a Type check status badge.
+- **Pre-commit** (`.pre-commit-config.yaml`): 13 hooks that run on
+  every commit — file hygiene (trailing whitespace, EOL fixer,
+  yaml/toml/json validators, large-file guard, merge-conflict
+  detector, executable/shebang sanity), Ruff lint+format and Mypy.
+  Versions are pinned to match the CI workflows; install once with
+  `pre-commit install`.
+- **`.editorconfig`**: project-wide editor conventions — UTF-8, LF,
+  4-space Python (100 cols), 2-space YAML/TOML/JSON/Markdown/Ruby/
+  shell, tabs for `Makefile`. Generated trees (`dist/`, `build/`,
+  `.venv/`) are explicitly excluded from formatting rules.
+- `scripts/extract_changelog.py` is now properly executable, caught
+  by the new `check-shebang-scripts-are-executable` pre-commit hook.
 
 ---
 

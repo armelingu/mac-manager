@@ -1,0 +1,68 @@
+# Pre-commit hooks: catch obvious problems before they hit CI.
+#
+# Install once with:   pre-commit install
+# Run manually with:   pre-commit run --all-files
+# Update hooks with:   pre-commit autoupdate
+#
+# Docs: https://pre-commit.com
+
+minimum_pre_commit_version: "3.7.0"
+
+default_language_version:
+  python: python3
+
+# Skip hooks that need network or that produce noise on commit.
+# These still run in CI, where they're authoritative.
+default_stages: [pre-commit]
+
+repos:
+  # ---------------------------------------------------------------------
+  # File hygiene — trailing whitespace, EOL, large files, merge marks…
+  # ---------------------------------------------------------------------
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ["--maxkb=512"]
+      - id: check-case-conflict
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+      - id: mixed-line-ending
+        args: ["--fix=lf"]
+
+  # ---------------------------------------------------------------------
+  # Ruff: lint + format. Keeps the working copy aligned with the CI lint
+  # workflow exactly (same `ruff` version is pinned in the [dev] extra).
+  # ---------------------------------------------------------------------
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.11
+    hooks:
+      - id: ruff
+        name: ruff (lint, autofix)
+        args: ["--fix", "--exit-non-zero-on-fix"]
+      - id: ruff-format
+        name: ruff (format)
+
+  # ---------------------------------------------------------------------
+  # Mypy. Runs against the project's source tree only; the `pre-commit`
+  # virtualenv installs the project so imports resolve correctly.
+  # ---------------------------------------------------------------------
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.19.1
+    hooks:
+      - id: mypy
+        name: mypy (type check)
+        args: [--config-file=pyproject.toml]
+        additional_dependencies:
+          - types-psutil
+          - rich>=13.7.0
+          - psutil>=5.9.0
+          - pytest>=8.0
+        files: ^(macmanager|scripts|tests)/.*\.py$
