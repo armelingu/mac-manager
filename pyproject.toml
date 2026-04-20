@@ -7,7 +7,7 @@ name = "mac-manager"
 dynamic = ["version"]
 description = "Monitor your Mac's health, security and hardware from the terminal — battery alerts, live dashboard, security audit and dev-tooling inventory."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.9"
 license = "Apache-2.0"
 license-files = ["LICENSE", "NOTICE"]
 keywords = [
@@ -41,6 +41,7 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",

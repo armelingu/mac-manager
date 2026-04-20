@@ -20,7 +20,24 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
 
 ## [Unreleased]
 
-<!-- Add your changes here as you work on them. -->
+### Added
+- PEP 621 `pyproject.toml` with the [hatchling](https://hatch.pypa.io/) build
+  backend, making Mac Manager installable via `pip install .` and publishable
+  as a wheel and sdist.
+- Console script entry point: `mm = macmanager.cli:main`, so `pip install`
+  users get the `mm` command on their PATH.
+- Optional `[dev]` extra bundling `build`, `twine`, `ruff`, `mypy`,
+  `pre-commit`, `pytest` and `pytest-cov`.
+- Repository metadata: improved description plus four new GitHub topics
+  (`developer-tools`, `launchd`, `system-monitoring`, `command-line-tool`).
+
+### Changed
+- Minimum supported Python lowered from 3.10 to **3.9** (matches the stock
+  `/usr/bin/python3` shipped with recent macOS versions).
+- Package version is now read dynamically from `macmanager/__init__.py` via
+  `tool.hatch.version`, keeping a single source of truth.
+- `.gitignore` hardened to cover `build/`, `dist/`, `*.egg-info/`, and
+  the caches produced by `pytest`, `mypy` and `ruff`.
 
 ---
 
