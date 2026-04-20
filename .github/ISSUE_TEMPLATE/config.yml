@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or general discussion
+    url: https://github.com/armelingu/mac-manager/discussions
+    about: For usage questions, ideas at the brainstorm stage, or anything that isn't clearly a bug or a feature request, please open a Discussion.
+  - name: Security vulnerability
+    url: https://github.com/armelingu/mac-manager/security/advisories/new
+    about: Do not open a public issue for vulnerabilities. Use Private Vulnerability Reporting (see SECURITY.md).

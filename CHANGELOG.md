@@ -105,6 +105,26 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
   `.venv/`) are explicitly excluded from formatting rules.
 - `scripts/extract_changelog.py` is now properly executable, caught
   by the new `check-shebang-scripts-are-executable` pre-commit hook.
+- **Community health files** (drives the GitHub Insights → Community
+  Standards checklist to 100%):
+  - `CONTRIBUTING.md`: full contributor guide (dev setup, commit/PR
+    workflow, code style, contribution licensing).
+  - `CODE_OF_CONDUCT.md`: verbatim Contributor Covenant 2.1 with
+    enforcement contact.
+  - `SECURITY.md`: supported-version table, two private reporting
+    channels (GitHub Private Vulnerability Reporting + email),
+    response-time SLOs, 90-day coordinated disclosure policy.
+- **Issue templates** (`.github/ISSUE_TEMPLATE/`): structured `Bug
+  report` and `Feature request` forms (YAML schema), plus a config
+  that disables blank issues and routes questions to Discussions and
+  vulnerabilities to private reporting.
+- **Pull request template** (`.github/PULL_REQUEST_TEMPLATE.md`):
+  type-of-change checklist, related-issues block, screenshots/output
+  section and a contributor checklist that mirrors the
+  CONTRIBUTING.md requirements.
+- **Sponsor button** (`.github/FUNDING.yml`): scaffolded with every
+  major channel commented out — flip them on once accounts are
+  registered.
 
 ---
 

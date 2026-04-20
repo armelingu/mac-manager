@@ -1,0 +1,16 @@
+# Funding sources displayed under the "Sponsor" button on GitHub.
+# Docs: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/displaying-a-sponsor-button-in-your-repository
+#
+# Uncomment whichever channels you actually use. The button is hidden
+# entirely if every entry is null.
+
+# github: armelingu             # Set up GitHub Sponsors first.
+# ko_fi: armelingu              # https://ko-fi.com/<user>
+# buy_me_a_coffee: armelingu    # https://buymeacoffee.com/<user>
+# liberapay: armelingu          # https://liberapay.com/<user>
+# patreon: armelingu            # https://patreon.com/<user>
+# open_collective: mac-manager  # https://opencollective.com/<slug>
+
+# Custom URLs (max 4) — useful for PIX, OpenSats, Linktree, etc.
+custom:
+  - "https://github.com/armelingu/mac-manager"

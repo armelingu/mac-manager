@@ -1,0 +1,102 @@
+name: Bug report
+description: Something is broken or behaves differently than documented.
+title: "[bug] "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug. Please fill in every
+        section — incomplete reports get closed automatically.
+
+  - type: checkboxes
+    id: prereqs
+    attributes:
+      label: Pre-flight checks
+      options:
+        - label: I searched [existing issues](https://github.com/armelingu/mac-manager/issues?q=is%3Aissue) and didn't find this one.
+          required: true
+        - label: I'm on the latest released version of Mac Manager.
+          required: true
+        - label: I read [SECURITY.md](https://github.com/armelingu/mac-manager/blob/main/SECURITY.md) and confirm this is **not** a security vulnerability.
+          required: true
+
+  - type: input
+    id: mm-version
+    attributes:
+      label: Mac Manager version
+      description: Output of `mm --version`.
+      placeholder: "mac-manager 0.1.0"
+    validations:
+      required: true
+
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version + chip
+      description: Output of `sw_vers -productVersion` and `uname -m`.
+      placeholder: "macOS 14.5 / arm64 (Apple Silicon)"
+    validations:
+      required: true
+
+  - type: input
+    id: python
+    attributes:
+      label: Python version
+      description: Output of `python3 --version`.
+      placeholder: "Python 3.12.4"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: install-method
+    attributes:
+      label: Install method
+      options:
+        - Homebrew (armelingu/tap)
+        - pipx
+        - pip --user
+        - From source (./install.sh)
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: The exact command(s) you ran and the conditions to trigger the bug.
+      placeholder: |
+        1. Run `mm watch -i 1`
+        2. Wait for the dashboard to refresh
+        3. ...
+      render: bash
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+      description: What you thought would happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+      description: What actually happened — include the **full output** in a code block.
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context
+      description: |
+        Anything else: relevant logs from `logs/`, configuration overrides,
+        third-party tools that might interact with Mac Manager, etc.
+    validations:
+      required: false

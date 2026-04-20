@@ -1,0 +1,75 @@
+name: Feature request
+description: Suggest an improvement, new subcommand, or new metric.
+title: "[feat] "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to suggest something! Mac Manager keeps
+        a small surface on purpose, so the bar for new features is "would
+        most macOS power users want this on their machine?".
+
+  - type: checkboxes
+    id: prereqs
+    attributes:
+      label: Pre-flight checks
+      options:
+        - label: I searched [existing issues](https://github.com/armelingu/mac-manager/issues?q=is%3Aissue) and didn't find a similar request.
+          required: true
+        - label: This is a feature for **Mac Manager itself**, not a request to add a new third-party integration that already has a CLI of its own.
+          required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: User problem
+      description: What are you trying to accomplish, and what gets in the way today?
+      placeholder: |
+        I want to know X without leaving the terminal. Today I have to
+        run Y, copy-paste Z and ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: |
+        Sketch the user-facing surface — subcommand name, flags, sample
+        output. The more concrete, the easier to discuss.
+      placeholder: |
+        Add `mm gpu` that prints:
+          - GPU model (Apple M1 / M2 / M3)
+          - Current GPU utilization (via `powermetrics`)
+          - Frame rate of the active app (if available)
+      render: bash
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Other tools, scripts or designs you tried or thought about.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Platform scope
+      options:
+        - Apple Silicon only (current default)
+        - Both Apple Silicon and Intel
+        - Apple Silicon only, but Intel best-effort
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context
+      description: Mockups, links to similar tools, prior art, anything else.
+    validations:
+      required: false
