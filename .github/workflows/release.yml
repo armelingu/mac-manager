@@ -1,0 +1,166 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+      - "v[0-9]+.[0-9]+.[0-9]+-*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release (e.g. 0.2.0) — must already exist in CHANGELOG.md"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # -------------------------------------------------------------------------
+  # 1. Build wheel + sdist and expose them as a workflow artifact so the
+  #    downstream jobs (GH Release / PyPI) all consume byte-identical files.
+  # -------------------------------------------------------------------------
+  build:
+    name: Build distribution
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      version: ${{ steps.resolve-version.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build toolchain
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install build
+
+      - name: Resolve version
+        id: resolve-version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            v="${{ inputs.version }}"
+          else
+            v="${GITHUB_REF_NAME#v}"
+          fi
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+          echo "Resolved version: $v"
+
+      - name: Verify package version matches tag
+        run: |
+          pkg_ver=$(python -c "import re,pathlib; t=pathlib.Path('macmanager/__init__.py').read_text(); print(re.search(r'__version__ = \"([^\"]+)\"', t).group(1))")
+          tag_ver="${{ steps.resolve-version.outputs.version }}"
+          if [ "$pkg_ver" != "$tag_ver" ]; then
+            echo "::error::Version mismatch: macmanager/__init__.py = $pkg_ver, tag = $tag_ver"
+            exit 1
+          fi
+          echo "Version OK: $pkg_ver"
+
+      - name: Build sdist and wheel
+        run: python -m build
+
+      - name: List build artifacts
+        run: ls -la dist/
+
+      - name: Upload distribution artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+          retention-days: 14
+          if-no-files-found: error
+
+  # -------------------------------------------------------------------------
+  # 2. Create the GitHub Release, using the matching CHANGELOG section as
+  #    release notes and attaching the wheel + sdist.
+  # -------------------------------------------------------------------------
+  github-release:
+    name: Publish GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Download distribution artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+
+      - name: Extract release notes from CHANGELOG
+        id: notes
+        run: |
+          python scripts/extract_changelog.py "${{ needs.build.outputs.version }}" > release_notes.md
+          echo "----- preview -----"
+          head -20 release_notes.md
+          echo "-------------------"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.build.outputs.version }}
+          name: v${{ needs.build.outputs.version }}
+          body_path: release_notes.md
+          draft: false
+          prerelease: ${{ contains(needs.build.outputs.version, '-') }}
+          files: dist/*
+          fail_on_unmatched_files: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  # -------------------------------------------------------------------------
+  # 3. PyPI publication (disabled by default).
+  #
+  # To activate:
+  #   1. Create the project on PyPI (one-time, via the web UI or `twine`).
+  #   2. Configure Trusted Publishing:
+  #      https://docs.pypi.org/trusted-publishers/adding-a-publisher/
+  #      - Owner: armelingu
+  #      - Repository: mac-manager
+  #      - Workflow name: release.yml
+  #      - Environment: pypi
+  #   3. Create an Environment named `pypi` in Settings → Environments.
+  #   4. Remove the `if: false` guard below.
+  # -------------------------------------------------------------------------
+  pypi-publish:
+    name: Publish to PyPI
+    if: false # flip to `${{ !contains(needs.build.outputs.version, '-') }}` when ready
+    needs: [build, github-release]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: pypi
+      url: https://pypi.org/project/mac-manager/
+    permissions:
+      id-token: write
+    steps:
+      - name: Download distribution artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+
+      - name: Publish to PyPI via Trusted Publishing
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          skip-existing: true
+          print-hash: true

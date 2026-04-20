@@ -52,6 +52,16 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
   `__version__` exists and matches SemVer, every public module imports
   cleanly, and the CLI parser advertises all 13 subcommands.
 - Lint and Tests status badges at the top of the README.
+- GitHub Actions: **Release** workflow triggered by pushing a
+  `v[0-9]+.[0-9]+.[0-9]+` tag (or manually via `workflow_dispatch`).
+  It validates that `macmanager/__init__.py`'s version matches the tag,
+  builds the sdist + wheel, extracts the matching CHANGELOG section as
+  release notes and publishes a GitHub Release with the artifacts
+  attached. A guarded PyPI publication step using Trusted Publishing
+  (OIDC) is already wired — flip one `if:` to turn it on.
+- `scripts/extract_changelog.py`: small helper that extracts a given
+  release's notes from `CHANGELOG.md` using the Keep a Changelog
+  header format.
 
 ---
 
