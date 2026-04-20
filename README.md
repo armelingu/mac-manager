@@ -1,5 +1,14 @@
 # Mac Manager
 
+> Monitor your Mac's health, security and hardware from the terminal — battery alerts, live dashboard, security audit and dev-tooling inventory.
+
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
+[![Platform: macOS](https://img.shields.io/badge/platform-macOS-lightgrey.svg)](https://www.apple.com/macos/)
+[![Version](https://img.shields.io/badge/version-0.1.0-orange.svg)](./CHANGELOG.md)
+[![Status: alpha](https://img.shields.io/badge/status-alpha-yellow.svg)](#status)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
+
 A Python CLI to monitor and take care of your MacBook (Apple Silicon) right from the terminal — battery, system, disk, network — with a live dashboard, automatic daily logging, and native notifications to preserve battery health.
 
 > Designed for Apple Silicon MacBook Air/Pro. It also works on Intel, but some metrics (battery capacity, etc.) may vary.
@@ -115,3 +124,47 @@ mac-manager/
 ```
 
 Removes launchd agents, symlink and venv. Preserves the CSVs in `logs/`.
+
+## Status
+
+Mac Manager is currently in **alpha**: the public CLI surface is stabilizing,
+breaking changes can still happen between `0.x` releases without a deprecation
+window. Once we ship `1.0.0`, every breaking change will follow
+[Semantic Versioning](https://semver.org/) and a deprecation cycle.
+
+## Changelog
+
+All notable changes are documented in [CHANGELOG.md](./CHANGELOG.md), following
+the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
+
+## Contributing
+
+Contributions are very welcome — whether it's a bug report, a feature request
+or a pull request. Please read the contribution guide before opening anything:
+
+- 📖 [CONTRIBUTING.md](./CONTRIBUTING.md) — how to set up a dev environment,
+  coding style, commit conventions and PR workflow.
+- 🛡️ [SECURITY.md](./SECURITY.md) — how to responsibly report a vulnerability.
+- 🤝 [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) — what we expect from everyone
+  participating in this project.
+
+> The files above are being added incrementally; until each one lands, please
+> open an issue on [GitHub](https://github.com/armelingu/mac-manager/issues)
+> for anything you'd like to discuss.
+
+## License
+
+Copyright © 2026 [Gustavo Armelin](https://github.com/armelingu).
+
+This project is released under the [Apache License 2.0](./LICENSE) — a
+permissive license that allows commercial use, modification, distribution
+and private use, with patent protection. See [`NOTICE`](./NOTICE) for the
+required attribution and the third-party licenses bundled at runtime.
+
+```
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+```
