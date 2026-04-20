@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.macmanager.battery-alert</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>{{SCRIPT_DIR}}/mm</string>
+        <string>alerts</string>
+    </array>
+
+    <!-- Evaluates every 15 min (900s) -->
+    <key>StartInterval</key>
+    <integer>900</integer>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>{{SCRIPT_DIR}}/logs/launchd-alert.out</string>
+    <key>StandardErrorPath</key>
+    <string>{{SCRIPT_DIR}}/logs/launchd-alert.err</string>
+</dict>
+</plist>

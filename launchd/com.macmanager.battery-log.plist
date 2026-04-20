@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.macmanager.battery-log</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>{{SCRIPT_DIR}}/mm</string>
+        <string>log</string>
+    </array>
+
+    <!-- Runs once a day at 09:00 -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>9</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>{{SCRIPT_DIR}}/logs/launchd-log.out</string>
+    <key>StandardErrorPath</key>
+    <string>{{SCRIPT_DIR}}/logs/launchd-log.err</string>
+</dict>
+</plist>
