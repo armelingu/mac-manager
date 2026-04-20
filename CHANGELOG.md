@@ -76,6 +76,15 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
   "light up" automatically once the first release lands.
 - Distribution artifacts (sdist + wheel) validated with `twine check`
   — both pass strict metadata + README rendering validation.
+- **Homebrew tap** ([`armelingu/homebrew-tap`](https://github.com/armelingu/homebrew-tap))
+  bootstrapped with a Python virtualenv-based formula, README and a
+  `brew test-bot` CI workflow that audits and test-installs every
+  formula on macOS-latest. Formula `url`/`sha256` are placeholders
+  until the first release lands; activation is documented in
+  [`RELEASING.md`](./RELEASING.md).
+- README's "Installation" section now showcases three install paths:
+  Homebrew (recommended once released), pip/pipx (once on PyPI) and
+  the existing `./install.sh` source flow (works today).
 
 ---
 

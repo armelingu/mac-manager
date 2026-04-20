@@ -19,7 +19,28 @@ A Python CLI to monitor and take care of your MacBook (Apple Silicon) right from
 
 ## Installation
 
+### Homebrew (recommended, once v0.1.0 is released)
+
 ```bash
+brew install armelingu/tap/mac-manager
+```
+
+> The Homebrew tap lives at [armelingu/homebrew-tap](https://github.com/armelingu/homebrew-tap).
+> The formula is already wired but pinned to a placeholder version — it
+> starts working as soon as the first Mac Manager release lands.
+
+### pip / pipx (once published to PyPI)
+
+```bash
+pipx install mac-manager   # isolated, recommended
+# or
+pip install --user mac-manager
+```
+
+### From source (works today)
+
+```bash
+git clone https://github.com/armelingu/mac-manager.git
 cd mac-manager
 ./install.sh
 ```

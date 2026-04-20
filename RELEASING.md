@@ -123,7 +123,39 @@ Pushing the tag triggers `.github/workflows/release.yml`, which will:
 - [ ] `pip install mac-manager==X.Y.Z` in a clean venv and run `mm --version`
       to confirm the wheel on PyPI (once that job is enabled) is the right
       one.
+- [ ] Bump the Homebrew tap (see next section).
 - [ ] Announce the release (optional — Twitter/Mastodon/Bluesky).
+
+## Updating the Homebrew tap
+
+After every release, the formula at
+[`armelingu/homebrew-tap`](https://github.com/armelingu/homebrew-tap)
+needs the new `url` and `sha256`.
+
+```bash
+# 1. Compute SHA256 of the new sdist.
+PYPI_URL="https://files.pythonhosted.org/packages/source/m/mac-manager/mac_manager-X.Y.Z.tar.gz"
+SHA=$(curl -sL "$PYPI_URL" | shasum -a 256 | awk '{print $1}')
+
+# 2. In the tap repo, update Formula/mac-manager.rb:
+#      url    "$PYPI_URL"
+#      sha256 "$SHA"
+#    Also bump any `resource` blocks whose pins moved (see
+#    `pip download` output to grab fresh URLs and SHAs).
+
+# 3. Validate locally if you have brew installed:
+brew audit --strict --online Formula/mac-manager.rb
+brew install --build-from-source ./Formula/mac-manager.rb
+brew test mac-manager
+
+# 4. Commit and push:
+git add Formula/mac-manager.rb
+git commit -m "mac-manager X.Y.Z"
+git push
+```
+
+The tap's CI (`brew test-bot`) will exercise the formula on macos-latest
+and block the push if it fails.
 
 ## Fixing a botched release
 
