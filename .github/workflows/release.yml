@@ -128,22 +128,21 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
   # -------------------------------------------------------------------------
-  # 3. PyPI publication (disabled by default).
+  # 3. PyPI publication via Trusted Publishing (OIDC).
   #
-  # To activate:
-  #   1. Create the project on PyPI (one-time, via the web UI or `twine`).
-  #   2. Configure Trusted Publishing:
-  #      https://docs.pypi.org/trusted-publishers/adding-a-publisher/
-  #      - Owner: armelingu
-  #      - Repository: mac-manager
-  #      - Workflow name: release.yml
-  #      - Environment: pypi
-  #   3. Create an Environment named `pypi` in Settings → Environments.
-  #   4. Remove the `if: false` guard below.
+  # Pre-reqs (one-time, already in place for `mac-manager`):
+  #   * Pending Trusted Publisher registered on PyPI:
+  #     owner=armelingu, repo=mac-manager, workflow=release.yml,
+  #     environment=pypi.
+  #   * GitHub environment `pypi` with deployment restricted to
+  #     v*.*.* tags.
+  #
+  # Publishes on every stable tag (vX.Y.Z). Pre-releases (vX.Y.Z-*)
+  # are skipped so TestPyPI-style experiments don't leak to PyPI.
   # -------------------------------------------------------------------------
   pypi-publish:
     name: Publish to PyPI
-    if: false # flip to `${{ !contains(needs.build.outputs.version, '-') }}` when ready
+    if: ${{ !contains(needs.build.outputs.version, '-') }}
     needs: [build, github-release]
     runs-on: ubuntu-latest
     timeout-minutes: 10

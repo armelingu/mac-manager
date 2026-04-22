@@ -24,6 +24,26 @@ _Nothing yet — open the floor for v0.2.0._
 
 ---
 
+## [0.1.1] — 2026-04-22
+
+### Added
+- **PyPI publishing via Trusted Publishing (OIDC).** The `release.yml`
+  workflow now publishes to [pypi.org/project/mac-manager](https://pypi.org/project/mac-manager/)
+  on every stable tag. No API tokens involved — GitHub Actions
+  authenticates to PyPI via OpenID Connect using the registered
+  trusted publisher (owner `armelingu`, repo `mac-manager`, workflow
+  `release.yml`, environment `pypi`).
+- **GitHub environment `pypi`** with deployment restricted to
+  `v*.*.*` tags, so ad-hoc workflow runs from branches can't trigger
+  a publish.
+
+### Changed
+- Pre-release tags (`vX.Y.Z-*`) skip PyPI publication — only stable
+  tags go to the index.
+- `release.yml` comment block updated to reflect the live setup.
+
+---
+
 ## [0.1.0] — 2026-04-20
 
 > Inaugural release. Previously this section was split between the
@@ -239,5 +259,6 @@ _Nothing yet — open the floor for v0.2.0._
 - `NOTICE` — required attribution file under Apache 2.0; lists `rich` (MIT)
   and `psutil` (BSD-3-Clause) as runtime dependencies.
 
-[Unreleased]: https://github.com/armelingu/mac-manager/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/armelingu/mac-manager/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/armelingu/mac-manager/releases/tag/v0.1.1
 [0.1.0]: https://github.com/armelingu/mac-manager/releases/tag/v0.1.0
