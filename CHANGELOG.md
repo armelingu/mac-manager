@@ -125,6 +125,19 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
 - **Sponsor button** (`.github/FUNDING.yml`): scaffolded with every
   major channel commented out — flip them on once accounts are
   registered.
+- **Branch protection** on `main`: 13 required status checks
+  (Lint + Tests 5×2 matrix + Type check 2 cells), strict mode (PRs
+  must be up-to-date with `main` before merge), required linear
+  history, force-push and deletion blocked, conversation resolution
+  enforced, signed commits encouraged. `enforce_admins=false` keeps
+  the door open for emergency admin pushes.
+- **Repo-wide settings**: squash-merge as the only allowed merge
+  style (linear-history-friendly), auto-delete head branch after
+  merge, GitHub Discussions enabled.
+- **Dependabot auto-merge** workflow (`.github/workflows/dependabot-automerge.yml`):
+  auto-approves and squash-merges Dependabot PRs that are pure
+  patch- or minor-version bumps once every required status check
+  is green; major bumps trigger a comment instead and stay manual.
 
 ---
 
