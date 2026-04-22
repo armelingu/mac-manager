@@ -1,5 +1,25 @@
 name: Tests
 
+# -----------------------------------------------------------------------------
+# The coverage badge refresh at the bottom of this workflow needs a
+# Personal Access Token with `gist` scope, stored as the `GIST_SECRET`
+# repository secret. One-time setup:
+#
+#   1. Create a fine-grained PAT at https://github.com/settings/personal-access-tokens/new
+#      - Resource owner: armelingu
+#      - Repository access: Public Repositories (read-only)
+#      - Permissions → Account → "Gists": Read and write
+#      - Expiration: pick something you're comfortable rotating (e.g. 90d)
+#   2. `gh secret set GIST_SECRET --repo armelingu/mac-manager` (paste the token)
+#
+# The target gist is:
+#   https://gist.github.com/armelingu/4e1e4b488d91a1edec226428792429c7
+# and the shields.io badge is wired in README.md.
+#
+# Without `GIST_SECRET` the workflow still passes — the badge step
+# just no-ops because the action silently skips when auth is missing.
+# -----------------------------------------------------------------------------
+
 on:
   push:
     branches: [main]
@@ -47,17 +67,52 @@ jobs:
 
       - name: Run pytest (with coverage on Python 3.12 / Ubuntu)
         if: matrix.python-version == '3.12' && matrix.os == 'ubuntu-latest'
-        run: pytest --cov=macmanager --cov-report=xml --cov-report=term-missing
+        run: pytest --cov=macmanager --cov=scripts --cov-report=xml --cov-report=json --cov-report=term-missing
 
       - name: Run pytest
         if: matrix.python-version != '3.12' || matrix.os != 'ubuntu-latest'
         run: pytest
 
-      - name: Upload coverage artifact
+      - name: Extract coverage percentage
+        id: coverage
+        if: matrix.python-version == '3.12' && matrix.os == 'ubuntu-latest'
+        run: |
+          pct=$(python -c 'import json; d=json.load(open("coverage.json")); print(round(d["totals"]["percent_covered"]))')
+          echo "percent=$pct" >> "$GITHUB_OUTPUT"
+          # Pick a shields-friendly color from the coverage bucket.
+          if [ "$pct" -ge 80 ]; then color="brightgreen"
+          elif [ "$pct" -ge 60 ]; then color="green"
+          elif [ "$pct" -ge 40 ]; then color="yellowgreen"
+          elif [ "$pct" -ge 25 ]; then color="yellow"
+          else color="red"
+          fi
+          echo "color=$color" >> "$GITHUB_OUTPUT"
+          echo "Coverage: ${pct}% ($color)"
+
+      - name: Upload coverage artifacts
         if: matrix.python-version == '3.12' && matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-xml
-          path: coverage.xml
+          name: coverage
+          path: |
+            coverage.xml
+            coverage.json
           if-no-files-found: ignore
           retention-days: 14
+
+      # Only refresh the badge on pushes to `main` — PR runs would
+      # flicker the number back and forth as branches diverge.
+      - name: Update coverage badge gist
+        if: >-
+          matrix.python-version == '3.12'
+          && matrix.os == 'ubuntu-latest'
+          && github.event_name == 'push'
+          && github.ref == 'refs/heads/main'
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        with:
+          auth: ${{ secrets.GIST_SECRET }}
+          gistID: 4e1e4b488d91a1edec226428792429c7
+          filename: coverage-badge.json
+          label: coverage
+          message: ${{ steps.coverage.outputs.percent }}%
+          color: ${{ steps.coverage.outputs.color }}

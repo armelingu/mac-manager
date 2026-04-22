@@ -6,6 +6,7 @@
 [![Tests](https://github.com/armelingu/mac-manager/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/armelingu/mac-manager/actions/workflows/test.yml)
 [![Type check](https://github.com/armelingu/mac-manager/actions/workflows/typecheck.yml/badge.svg?branch=main)](https://github.com/armelingu/mac-manager/actions/workflows/typecheck.yml)
 [![CodeQL](https://github.com/armelingu/mac-manager/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/armelingu/mac-manager/actions/workflows/codeql.yml)
+[![Coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2Farmelingu%2F4e1e4b488d91a1edec226428792429c7%2Fraw%2Fcoverage-badge.json)](https://github.com/armelingu/mac-manager/actions/workflows/test.yml)
 [![PyPI](https://img.shields.io/pypi/v/mac-manager.svg)](https://pypi.org/project/mac-manager/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)

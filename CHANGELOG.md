@@ -20,7 +20,31 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
 
 ## [Unreleased]
 
+### Added
+- **Unit test suite (202 tests)** covering every pure function in
+  the package. Focus is surgical: pure formatters, score tables,
+  color pickers, dataclass contracts, and the caching layer — no
+  mocks of psutil/subprocess. Suite runs in ~0.5s. Files added
+  under `tests/`: `test_ui.py`, `test_doctor.py`, `test_network.py`,
+  `test_battery.py`, `test_system.py`, `test_cache.py`,
+  `test_security.py`, `test_alerts.py`, `test_dev.py`,
+  `test_logger.py`, `test_extract_changelog.py`.
+- **Coverage gate**: `[tool.coverage.report].fail_under = 28`.
+  Current run lands at **32%** total, with `ui.py`, `cache.py`
+  and `__init__.py` at 100%.
+- **Coverage badge in README** backed by a public gist
+  (`armelingu/4e1e4b488d91a1edec226428792429c7`) that the `Tests`
+  workflow refreshes on every push to `main` via
+  `schneegans/dynamic-badges-action`. Requires a one-time
+  `GIST_SECRET` PAT — see the comment block at the top of
+  `.github/workflows/test.yml`.
+
 ### Changed
+- `doctor._score` signature relaxed from
+  `list[tuple[float, int]]` to `Sequence[tuple[float, int]]` —
+  lets callers pass literal `[(90, 25), ...]` int tuples without
+  variance complaints from Mypy, and matches how the function is
+  actually used inside `doctor()`.
 - README installation section now treats `brew install
   armelingu/tap/mac-manager` and `pipx install mac-manager` as
   first-class paths (they both work as of v0.1.1); removes the
@@ -28,6 +52,14 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
 - Version badge in README bumped to 0.1.1.
 
 ### Fixed
+- **Caching bug discovered by the new tests**: `cache.cached` and
+  `cache.peek` promised to fall back to a plain function call when
+  called with unhashable arguments (e.g. a `dict`), but only
+  guarded against `TypeError` at tuple construction — the actual
+  failure surfaced later, at `_STORE.get(key)`, and crashed the
+  caller. Both paths now also run `hash(cache_key)` inside the
+  `try/except` so unhashable inputs are detected eagerly and the
+  fall-through path is taken as documented.
 - Homebrew formula (`armelingu/homebrew-tap`) now has real SHA256
   hashes for every resource (`rich` 15.0.0, `psutil` 7.2.2,
   `pygments` 2.20.0, `markdown-it-py` 3.0.0, `mdurl` 0.1.2) and
