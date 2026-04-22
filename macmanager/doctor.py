@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import cast
 
 from rich.panel import Panel
@@ -14,9 +15,13 @@ from macmanager.system import get_system
 from macmanager.ui import console, health_color
 
 
-def _score(value: float, ranges: list[tuple[float, int]]) -> int:
+def _score(value: float, ranges: Sequence[tuple[float, int]]) -> int:
     """For each (threshold, points), returns the first score whose threshold is met.
-    Ranges should be ordered from best to worst case."""
+    Ranges should be ordered from best to worst case.
+
+    `Sequence` rather than `list` so int-valued thresholds (which are the
+    natural literals in test fixtures) stay assignable thanks to
+    `Sequence`'s covariance."""
     for threshold, points in ranges:
         if value >= threshold:
             return points

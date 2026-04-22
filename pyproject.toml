@@ -174,12 +174,17 @@ xfail_strict = true
 # ---------------------------------------------------------------------------
 
 [tool.coverage.run]
-source = ["macmanager"]
+source = ["macmanager", "scripts"]
 branch = true
 
 [tool.coverage.report]
 show_missing = true
 skip_covered = false
+precision = 1
+# Locks in the current surgical-coverage target. Drop to 25% or lower
+# is almost always a mistake (deleted tests, forgot to register a new
+# suite). Bump this number up as the suite grows.
+fail_under = 28
 exclude_lines = [
     "pragma: no cover",
     "raise NotImplementedError",

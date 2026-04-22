@@ -32,8 +32,12 @@ def cached(ttl: float):
         def wrapper(*args, **kwargs) -> T:
             if ttl <= 0:
                 return fn(*args, **kwargs)
+            # Unhashable arguments (dicts, lists, sets, ...) can't be used
+            # as dict keys. Detect that and fall through to a plain call
+            # so the cache never raises on the caller.
             try:
                 cache_key = (key_fn, args, tuple(sorted(kwargs.items())))
+                hash(cache_key)
             except TypeError:
                 return fn(*args, **kwargs)
 
@@ -73,6 +77,7 @@ def peek(fn: Callable, *args, **kwargs):
     key_fn = (fn.__module__, fn.__qualname__)
     try:
         cache_key = (key_fn, args, tuple(sorted(kwargs.items())))
+        hash(cache_key)
     except TypeError:
         return _MISS
     entry = _STORE.get(cache_key)
