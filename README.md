@@ -10,7 +10,7 @@
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
 [![Platform: macOS](https://img.shields.io/badge/platform-macOS-lightgrey.svg)](https://www.apple.com/macos/)
-[![Version](https://img.shields.io/badge/version-0.1.0-orange.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.1.1-orange.svg)](./CHANGELOG.md)
 [![Status: alpha](https://img.shields.io/badge/status-alpha-yellow.svg)](#status)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
 
@@ -20,17 +20,17 @@ A Python CLI to monitor and take care of your MacBook (Apple Silicon) right from
 
 ## Installation
 
-### Homebrew (recommended, once v0.1.0 is released)
+### Homebrew (recommended)
 
 ```bash
 brew install armelingu/tap/mac-manager
 ```
 
-> The Homebrew tap lives at [armelingu/homebrew-tap](https://github.com/armelingu/homebrew-tap).
-> The formula is already wired but pinned to a placeholder version — it
-> starts working as soon as the first Mac Manager release lands.
+> The formula lives at [armelingu/homebrew-tap](https://github.com/armelingu/homebrew-tap).
+> You can also `brew install --HEAD armelingu/tap/mac-manager` to track
+> the latest commit on `main` instead of the released version.
 
-### pip / pipx (once published to PyPI)
+### pipx / pip
 
 ```bash
 pipx install mac-manager   # isolated, recommended
@@ -38,7 +38,13 @@ pipx install mac-manager   # isolated, recommended
 pip install --user mac-manager
 ```
 
-### From source (works today)
+After installation, the `mm` command is on your `PATH`.
+
+> `pipx`/`pip` installs give you the CLI only. The background
+> `launchd` agents (daily log + battery alerts) are set up by the
+> source install below, or you can register them manually later.
+
+### From source
 
 ```bash
 git clone https://github.com/armelingu/mac-manager.git

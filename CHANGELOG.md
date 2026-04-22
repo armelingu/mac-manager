@@ -20,7 +20,25 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
 
 ## [Unreleased]
 
-_Nothing yet — open the floor for v0.2.0._
+### Changed
+- README installation section now treats `brew install
+  armelingu/tap/mac-manager` and `pipx install mac-manager` as
+  first-class paths (they both work as of v0.1.1); removes the
+  "once released" disclaimers.
+- Version badge in README bumped to 0.1.1.
+
+### Fixed
+- Homebrew formula (`armelingu/homebrew-tap`) now has real SHA256
+  hashes for every resource (`rich` 15.0.0, `psutil` 7.2.2,
+  `pygments` 2.20.0, `markdown-it-py` 3.0.0, `mdurl` 0.1.2) and
+  points `url` at the official PyPI sdist of `mac-manager` 0.1.1.
+- Tap CI (`.github/workflows/test.yml` in the tap repo): replaced
+  the flaky `brew test-bot --only-setup` invocation (crashed on
+  the runner's pre-existing `brew doctor` warnings) with a focused
+  `brew style` + `brew audit --new --online` gate on every push,
+  plus a build-from-source + `brew test` job on PR/dispatch.
+  `brew install --build-from-source armelingu/tap/mac-manager`
+  has been verified green end-to-end on macos-latest.
 
 ---
 
