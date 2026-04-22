@@ -102,12 +102,20 @@ jobs:
 
       # Only refresh the badge on pushes to `main` — PR runs would
       # flicker the number back and forth as branches diverge.
+      #
+      # `continue-on-error: true` means a missing `GIST_SECRET` (which
+      # happens before the PAT is provisioned, and whenever the token
+      # expires) only produces a warning instead of failing the whole
+      # test matrix. The rest of the job has already validated the
+      # build; flipping the gate off because of a badge refresh would
+      # be over-reacting.
       - name: Update coverage badge gist
         if: >-
           matrix.python-version == '3.12'
           && matrix.os == 'ubuntu-latest'
           && github.event_name == 'push'
           && github.ref == 'refs/heads/main'
+        continue-on-error: true
         uses: schneegans/dynamic-badges-action@v1.7.0
         with:
           auth: ${{ secrets.GIST_SECRET }}
