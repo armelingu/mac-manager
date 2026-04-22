@@ -20,7 +20,18 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
 
 ## [Unreleased]
 
-### Added
+_Nothing yet — open the floor for v0.2.0._
+
+---
+
+## [0.1.0] — 2026-04-20
+
+> Inaugural release. Previously this section was split between the
+> end-user feature list (below) and a `[Unreleased]` block tracking
+> the open-source hardening roadmap. They've been merged here so the
+> tag captures the complete state shipped in v0.1.0.
+
+### Added — Repository, packaging and tooling
 - PEP 621 `pyproject.toml` with the [hatchling](https://hatch.pypa.io/) build
   backend, making Mac Manager installable via `pip install .` and publishable
   as a wheel and sdist.
@@ -139,16 +150,12 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
   patch- or minor-version bumps once every required status check
   is green; major bumps trigger a comment instead and stay manual.
 
----
+### Added — End-user features
 
-## [0.1.0] — 2026-04-20
-
-First public release. Mac Manager ships as a Python CLI focused on macOS
-(Apple Silicon first, Intel best-effort) that monitors battery, system, disk,
-network, security and the developer toolchain — all from the terminal — and
-fires native notifications to help preserve battery health.
-
-### Added
+> Mac Manager ships as a Python CLI focused on macOS
+> (Apple Silicon first, Intel best-effort) that monitors battery, system, disk,
+> network, security and the developer toolchain — all from the terminal — and
+> fires native notifications to help preserve battery health.
 
 #### Core CLI (`mm`)
 - `mm` (default `status`) — stacked panels with battery, system, disk and network.

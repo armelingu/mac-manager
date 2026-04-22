@@ -25,6 +25,8 @@ import pathlib
 import re
 import sys
 
+_LINK_REFERENCE_RE = re.compile(r"^\[[^\]]+\]:\s*\S+", re.MULTILINE)
+
 
 def extract(version: str, changelog: str) -> str:
     version = version.lstrip("v")
@@ -36,7 +38,14 @@ def extract(version: str, changelog: str) -> str:
     for i, m in enumerate(matches):
         if m.group("ver") == version:
             start = m.end()
-            end = matches[i + 1].start() if i + 1 < len(matches) else len(changelog)
+            if i + 1 < len(matches):
+                end = matches[i + 1].start()
+            else:
+                # Last section of the file. Stop at the link-reference
+                # block (`[Unreleased]: https://...`) so we don't drag
+                # the footer into the release notes.
+                link_match = _LINK_REFERENCE_RE.search(changelog, start)
+                end = link_match.start() if link_match else len(changelog)
             body = changelog[start:end].strip("\n")
             body = re.sub(r"\n-{3,}\s*$", "", body).rstrip()
             return body

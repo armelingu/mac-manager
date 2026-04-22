@@ -228,6 +228,16 @@ module = ["tests.*"]
 disallow_untyped_decorators = false
 check_untyped_defs = true
 
+# `pytest` ships untyped internals that use Python 3.10+ syntax (PEP 634
+# pattern matching). When we type-check `tests/` against `python_version
+# = "3.9"`, mypy follows the imports into _pytest and chokes on `match`
+# statements. Skip following imports into the pytest internals — we
+# don't own them and we don't gain anything from typing them here.
+[[tool.mypy.overrides]]
+module = ["pytest", "pytest.*", "_pytest", "_pytest.*"]
+follow_imports = "skip"
+ignore_missing_imports = true
+
 [tool.hatch.build.targets.sdist]
 include = [
     "macmanager/**",
