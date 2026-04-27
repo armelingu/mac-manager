@@ -116,7 +116,7 @@ jobs:
           && github.event_name == 'push'
           && github.ref == 'refs/heads/main'
         continue-on-error: true
-        uses: schneegans/dynamic-badges-action@v1.7.0
+        uses: schneegans/dynamic-badges-action@v1.8.0
         with:
           auth: ${{ secrets.GIST_SECRET }}
           gistID: 4e1e4b488d91a1edec226428792429c7
