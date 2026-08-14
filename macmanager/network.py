@@ -54,9 +54,21 @@ def _local_ip(iface: str = "en0") -> Optional[str]:
     return out or None
 
 
-@cached(ttl=300)
+def parse_route_interface(raw: str) -> Optional[str]:
+    """Extrai a interface da rota default (`route -n get default`)."""
+    m = re.search(r"^\s*interface:\s+(\S+)", raw, flags=re.MULTILINE)
+    return m.group(1) if m else None
+
+
+def _active_interface() -> str:
+    """Interface da rota default. Sem rota, cai em en0."""
+    parsed = parse_route_interface(_run(["route", "-n", "get", "default"], timeout=2))
+    return parsed or "en0"
+
+
+@cached(ttl=300, cache_none=False)
 def _public_ip() -> Optional[str]:
-    """Public IP rarely changes — a 5-min cache avoids hits on every refresh."""
+    """IP público muda pouco — cache de 5 min. None não é cacheado."""
     try:
         with urllib.request.urlopen("https://api.ipify.org", timeout=2) as r:
             return r.read().decode().strip()
@@ -106,7 +118,7 @@ def _wifi_info() -> dict:
 
 @cached(ttl=10)
 def get_network() -> NetworkInfo:
-    iface = "en0"
+    iface = _active_interface()
     local = _local_ip(iface)
     public = _public_ip()
     wifi = _wifi_info()

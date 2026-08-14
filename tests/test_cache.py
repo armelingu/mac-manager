@@ -207,6 +207,34 @@ class TestClearAll:
         assert is_miss(peek(two))
 
 
+class TestCacheNone:
+    """Falha de rede no IP público não pode ficar 5 min no cache."""
+
+    def test_default_still_caches_none(self) -> None:
+        calls = []
+
+        @cached(ttl=60)
+        def flaky() -> int | None:
+            calls.append(1)
+            return None
+
+        assert flaky() is None
+        assert flaky() is None
+        assert len(calls) == 1
+
+    def test_cache_none_false_retries(self) -> None:
+        calls = []
+
+        @cached(ttl=60, cache_none=False)
+        def flaky() -> int | None:
+            calls.append(1)
+            return None if len(calls) == 1 else 7
+
+        assert flaky() is None
+        assert flaky() == 7
+        assert len(calls) == 2
+
+
 class TestIsMiss:
     def test_sentinel_is_miss(self) -> None:
         assert is_miss(cache_mod._MISS)

@@ -13,10 +13,12 @@ from rich.console import Console
 from macmanager.cache import clear_all
 from macmanager.network import (
     NetworkInfo,
+    _active_interface,
     _local_ip,
     _run,
     _signal_quality,
     _wifi_info,
+    parse_route_interface,
     render_network_panel,
 )
 
@@ -153,3 +155,34 @@ class TestRenderNetworkPanel:
         out = buf.getvalue()
         assert "My" in out
         assert "WiFi" in out
+
+
+class TestParseRouteInterface:
+    """USB-C Ethernet / VPN não são en0. A rota default diz qual iface usar."""
+
+    def test_extracts_interface(self) -> None:
+        raw = (
+            "   route to: default\n"
+            "destination: default\n"
+            "    gateway: 192.168.1.1\n"
+            "  interface: en8\n"
+            "      flags: <UP,GATEWAY,DONE>\n"
+        )
+        assert parse_route_interface(raw) == "en8"
+
+    def test_empty_output_returns_none(self) -> None:
+        assert parse_route_interface("") is None
+        assert parse_route_interface("no interface here") is None
+
+
+class TestActiveInterface:
+    def test_falls_back_to_en0(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setattr("macmanager.network._run", lambda *args, **kwargs: "")
+        assert _active_interface() == "en0"
+
+    def test_uses_parsed_interface(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setattr(
+            "macmanager.network._run",
+            lambda *args, **kwargs: "  interface: utun4\n",
+        )
+        assert _active_interface() == "utun4"

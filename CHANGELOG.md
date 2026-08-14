@@ -52,6 +52,10 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
 - Version badge in README bumped to 0.1.1.
 
 ### Fixed
+- **`mm net` deixa de assumir `en0` e de cachear IP público `None`.**
+  A interface vem da rota default (`route -n get default`); sem rota,
+  cai em `en0`. Falha no ipify não fica 5 minutos no cache — o watch
+  tenta de novo no próximo ciclo.
 - **`mm watch -i` e `mm history -n` rejeitam 0 e negativo.** Antes
   `watch -i -1` crashava no `sleep` e `history -n -5` fatiava o CSV
   ao contrário. Linhas quebradas do CSV são ignoradas em vez de
