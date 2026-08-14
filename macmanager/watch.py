@@ -33,7 +33,7 @@ from macmanager.doctor import doctor as run_doctor
 from macmanager.network import render_network_panel
 from macmanager.security import check_macos_updates, run_all as run_security
 from macmanager.system import render_system_panel
-from macmanager.ui import console, health_color
+from macmanager.ui import console, health_color, safe_panel
 
 
 def _build_layout() -> Layout:
@@ -122,11 +122,11 @@ def _render(layout: Layout) -> Layout:
         border_style="cyan",
     )
     layout["header"].update(header)
-    layout["battery"].update(render_battery_panel())
-    layout["system"].update(render_system_panel())
-    layout["disk"].update(render_disk_panel(full=False))
-    layout["network"].update(render_network_panel())
-    layout["health"].update(_render_health_bar())
+    layout["battery"].update(safe_panel("Battery", render_battery_panel, "cyan"))
+    layout["system"].update(safe_panel("System", render_system_panel, "magenta"))
+    layout["disk"].update(safe_panel("Disk", lambda: render_disk_panel(full=False), "green"))
+    layout["network"].update(safe_panel("Network", render_network_panel, "blue"))
+    layout["health"].update(safe_panel("Overall health", _render_health_bar, "yellow"))
     layout["footer"].update(
         Align.center(Text("Press Ctrl+C to exit  ·  health bar refreshes every ~5min", style="dim"))
     )
