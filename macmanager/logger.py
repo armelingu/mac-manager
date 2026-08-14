@@ -3,13 +3,63 @@
 from __future__ import annotations
 
 import csv
+import os
+import platform
+import shutil
+from collections.abc import Mapping
 from datetime import datetime
 from pathlib import Path
 
 from macmanager.battery import get_battery
 from macmanager.ui import console
 
-LOGS_DIR = Path(__file__).resolve().parent.parent / "logs"
+_DATA_FILES = ("battery.csv", ".alert_state")
+_LEGACY_LOGS_DIR = Path(__file__).resolve().parent.parent / "logs"
+
+
+def default_logs_dir(*, home: Path | None = None, system: str | None = None) -> Path:
+    """Diretório estável do usuário — sobrevive a upgrade de pipx/Homebrew.
+
+    No Mac: ~/Library/Application Support/mac-manager
+    Em outros SOs (CI Linux): ~/.local/share/mac-manager
+    """
+    home = home or Path.home()
+    system = platform.system() if system is None else system
+    if system == "Darwin":
+        return home / "Library" / "Application Support" / "mac-manager"
+    return home / ".local" / "share" / "mac-manager"
+
+
+def resolve_logs_dir(
+    *,
+    env: Mapping[str, str] | None = None,
+    home: Path | None = None,
+    system: str | None = None,
+) -> Path:
+    """MACMANAGER_LOGS_DIR ganha; senão o diretório padrão da plataforma."""
+    environ = os.environ if env is None else env
+    override = (environ.get("MACMANAGER_LOGS_DIR") or "").strip()
+    if override:
+        return Path(override).expanduser().resolve()
+    return default_logs_dir(home=home, system=system)
+
+
+def migrate_legacy(legacy_dir: Path, dest_dir: Path) -> list[str]:
+    """Copia CSV/estado antigos se o destino ainda não tiver o arquivo."""
+    copied: list[str] = []
+    if legacy_dir.resolve() == dest_dir.resolve():
+        return copied
+    for name in _DATA_FILES:
+        src = legacy_dir / name
+        dest = dest_dir / name
+        if src.is_file() and not dest.exists():
+            dest_dir.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(src, dest)
+            copied.append(name)
+    return copied
+
+
+LOGS_DIR = resolve_logs_dir()
 BATTERY_CSV = LOGS_DIR / "battery.csv"
 ALERT_STATE = LOGS_DIR / ".alert_state"
 
@@ -26,13 +76,16 @@ BATTERY_FIELDS = [
 ]
 
 
-def _ensure_dir() -> None:
+def ensure_logs() -> Path:
+    """Garante o diretório e migra dados do `logs/` antigo do pacote."""
+    migrate_legacy(_LEGACY_LOGS_DIR, LOGS_DIR)
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
+    return LOGS_DIR
 
 
 def log_battery() -> dict:
     """Appends a battery snapshot to the CSV."""
-    _ensure_dir()
+    ensure_logs()
     info = get_battery()
     row = {
         "timestamp": datetime.now().isoformat(timespec="seconds"),
@@ -68,6 +121,7 @@ def cmd_history(args=None) -> None:
     """Shows the last N entries from the CSV."""
     from rich.table import Table
 
+    ensure_logs()
     if not BATTERY_CSV.exists():
         console.print("[yellow]No history yet. Run `mm log` or wait for launchd.[/]")
         return

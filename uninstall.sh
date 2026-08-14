@@ -27,4 +27,4 @@ if [ -d "$SCRIPT_DIR/.venv" ]; then
 fi
 
 echo ""
-echo "Uninstalled. The logs in logs/ were preserved."
+echo "Uninstalled. Battery history in ~/Library/Application Support/mac-manager/ was preserved."

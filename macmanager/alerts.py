@@ -6,7 +6,8 @@ Rules:
 - Not charging and <= 10%: critical alert
 - Health < 80%: once per week
 
-To avoid spam, we keep the state of the last notification in logs/.alert_state.
+O estado da última notificação fica em .alert_state no diretório de dados
+do usuário (Application Support), para o cooldown sobreviver a upgrades.
 """
 
 from __future__ import annotations
@@ -15,7 +16,7 @@ import json
 import time
 
 from macmanager.battery import get_battery
-from macmanager.logger import ALERT_STATE, LOGS_DIR
+from macmanager.logger import ALERT_STATE, ensure_logs
 from macmanager.notify import notify
 
 HIGH = 80
@@ -32,6 +33,7 @@ COOLDOWNS = {
 
 
 def _load_state() -> dict:
+    ensure_logs()
     if not ALERT_STATE.exists():
         return {}
     try:
@@ -41,7 +43,7 @@ def _load_state() -> dict:
 
 
 def _save_state(state: dict) -> None:
-    LOGS_DIR.mkdir(parents=True, exist_ok=True)
+    ensure_logs()
     ALERT_STATE.write_text(json.dumps(state, indent=2))
 
 
