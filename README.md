@@ -58,7 +58,7 @@ This will:
 - install `rich` and `psutil`
 - create the symlink `~/.local/bin/mm`
 - register two `launchd` agents:
-  - **daily log** at 09:00 → writes a snapshot to `logs/battery.csv`
+  - **daily log** at 09:00 → writes a snapshot to `~/Library/Application Support/mac-manager/battery.csv`
   - **battery alerts** every 15 min → native macOS notification
 
 Make sure `~/.local/bin` is in your `PATH`:
@@ -113,7 +113,7 @@ To preserve the lithium-ion battery (every cycle counts!), the agent checks ever
 
 ## History
 
-Every day at 9 AM, a snapshot is written to `logs/battery.csv`:
+Every day at 9 AM, a snapshot is written to `~/Library/Application Support/mac-manager/battery.csv`:
 
 ```csv
 timestamp,percent,is_charging,power_source,cycle_count,max_capacity_mah,design_capacity_mah,health_percent,temperature_c
@@ -156,7 +156,8 @@ mac-manager/
 ./uninstall.sh
 ```
 
-Removes launchd agents, symlink and venv. Preserves the CSVs in `logs/`.
+Removes launchd agents, symlink and venv. Preserves battery history in
+`~/Library/Application Support/mac-manager/`.
 
 ## Status
 

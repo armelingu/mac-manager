@@ -173,7 +173,7 @@ mm doctor
 ## Battery — history and alerts
 
 ### `mm log`
-**What it does:** writes **one snapshot** of the battery to `logs/battery.csv` (append-only CSV format).
+**What it does:** writes **one snapshot** of the battery to `~/Library/Application Support/mac-manager/battery.csv` (append-only CSV format).
 
 **Columns:** `timestamp, percent, is_charging, power_source, cycle_count, max_capacity_mah, design_capacity_mah, health_percent, temperature_c`
 
@@ -215,7 +215,7 @@ mm history -n 200      # last 200
 mm alerts
 ```
 
-> The state of the last notification is kept in `logs/.alert_state` (JSON with timestamps), preventing spam.
+> The state of the last notification is kept in `~/Library/Application Support/mac-manager/.alert_state` (JSON with timestamps), preventing spam.
 > Macs without a battery (desktop, or empty `ioreg`) produce no alerts.
 
 ---
@@ -364,14 +364,14 @@ mm history -n 30
 
 | File | What it has |
 |---|---|
-| `logs/battery.csv` | Append-only history of battery measurements |
-| `logs/.alert_state` | Timestamps of the last notification of each type (JSON, controls cooldown) |
-| `logs/launchd-log.{out,err}` | stdout/stderr of the agent that runs `mm log` |
-| `logs/launchd-alert.{out,err}` | stdout/stderr of the agent that runs `mm alerts` |
+| `~/Library/Application Support/mac-manager/battery.csv` | Append-only history of battery measurements |
+| `~/Library/Application Support/mac-manager/.alert_state` | Timestamps of the last notification of each type (JSON, controls cooldown) |
+| `logs/launchd-log.{out,err}` | stdout/stderr of the agent that runs `mm log` (source install) |
+| `logs/launchd-alert.{out,err}` | stdout/stderr of the agent that runs `mm alerts` (source install) |
 
 ## Reinstall / uninstall
 
 ```bash
 ./install.sh    # creates venv, symlink ~/.local/bin/mm and loads launchd agents
-./uninstall.sh  # removes everything (preserves CSVs in logs/)
+./uninstall.sh  # removes everything (preserves CSVs in Application Support)
 ```

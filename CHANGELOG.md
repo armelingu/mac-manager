@@ -52,6 +52,12 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
 - Version badge in README bumped to 0.1.1.
 
 ### Fixed
+- **Histórico e cooldown dos alertas saem da árvore do pacote.** `mm log`
+  / `mm history` / `mm alerts` gravam em
+  `~/Library/Application Support/mac-manager/` (no Linux do CI,
+  `~/.local/share/mac-manager`). Upgrade de pipx/Homebrew não apaga mais
+  o CSV. Dados antigos em `<repo>/logs/` são copiados na primeira
+  leitura. `MACMANAGER_LOGS_DIR` sobrescreve o caminho.
 - **`mm alerts` não dispara mais CRITICAL em Mac sem bateria.** Desktop
   ou `ioreg` vazio devolve percent=0 / design=0; o launchd a cada 15 min
   avisava "plug in the charger". Sem `DesignCapacity` o comando agora
