@@ -150,6 +150,7 @@ def _warm_cache_background() -> None:
 
 def cmd_watch(args=None) -> None:
     interval = getattr(args, "interval", 2) if args else 2
+    interval = max(1, int(interval))
     _warm_cache_background()
     layout = _build_layout()
     try:

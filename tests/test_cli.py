@@ -12,7 +12,7 @@ import pytest
 from rich.console import Console
 from rich.panel import Panel
 
-from macmanager.cli import cmd_status
+from macmanager.cli import build_parser, cmd_status
 
 
 class TestCmdStatusIsolation:
@@ -47,3 +47,27 @@ class TestCmdStatusIsolation:
         assert "sys" in out
         assert "disk" in out
         assert "Não foi possível coletar estes dados" in out
+
+
+class TestPositiveIntFlags:
+    """`watch -i -1` crashava no sleep; `history -n -5` fatiava o CSV ao contrário."""
+
+    def test_watch_rejects_non_positive_interval(self) -> None:
+        parser = build_parser()
+        for value in ("0", "-1"):
+            with pytest.raises(SystemExit):
+                parser.parse_args(["watch", "-i", value])
+
+    def test_watch_accepts_interval_one(self) -> None:
+        args = build_parser().parse_args(["watch", "-i", "1"])
+        assert args.interval == 1
+
+    def test_history_rejects_non_positive_n(self) -> None:
+        parser = build_parser()
+        for value in ("0", "-5"):
+            with pytest.raises(SystemExit):
+                parser.parse_args(["history", "-n", value])
+
+    def test_history_accepts_n_one(self) -> None:
+        args = build_parser().parse_args(["history", "-n", "1"])
+        assert args.n == 1

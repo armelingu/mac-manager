@@ -145,6 +145,8 @@ mm watch -i 5         # refresh every 5s
 mm watch --interval 10
 ```
 
+`-i` / `--interval` must be >= 1.
+
 > Full-screen works best in Terminal.app, iTerm2, Warp or Ghostty. In the embedded terminal in Cursor it may break visually.
 
 ---
@@ -195,6 +197,8 @@ mm history             # last 10 entries (default)
 mm history -n 30       # last 30
 mm history -n 200      # last 200
 ```
+
+`-n` must be >= 1. Broken CSV rows are skipped instead of crashing the command.
 
 ---
 
