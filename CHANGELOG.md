@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
 
 ## [Unreleased]
 
+## [0.1.2] — 2026-08-14
+
 ### Added
 - **Unit test suite (202 tests)** covering every pure function in
   the package. Focus is surgical: pure formatters, score tables,
@@ -49,7 +51,6 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
   armelingu/tap/mac-manager` and `pipx install mac-manager` as
   first-class paths (they both work as of v0.1.1); removes the
   "once released" disclaimers.
-- Version badge in README bumped to 0.1.1.
 
 ### Fixed
 - **`mm net` deixa de assumir `en0` e de cachear IP público `None`.**
@@ -338,6 +339,7 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
 - `NOTICE` — required attribution file under Apache 2.0; lists `rich` (MIT)
   and `psutil` (BSD-3-Clause) as runtime dependencies.
 
-[Unreleased]: https://github.com/armelingu/mac-manager/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/armelingu/mac-manager/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/armelingu/mac-manager/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/armelingu/mac-manager/releases/tag/v0.1.1
 [0.1.0]: https://github.com/armelingu/mac-manager/releases/tag/v0.1.0
