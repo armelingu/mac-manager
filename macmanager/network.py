@@ -31,10 +31,10 @@ class NetworkInfo:
 
 
 def _run(cmd: list[str], timeout: int = 5) -> str:
-    """Return stdout. Timeouts, missing binaries and OS errors become "".
+    """Devolve o stdout. Timeout, binário ausente e erro de OS viram "".
 
-    Callers degrade to "unknown" instead of crashing `mm` / `mm net` /
-    `mm watch`. Mirrors `macmanager.security._run`.
+    Quem chama degrada para "desconhecido" em vez de derrubar `mm` /
+    `mm net` / `mm watch`. Espelha `macmanager.security._run`.
     """
     try:
         p = subprocess.run(

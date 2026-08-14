@@ -50,9 +50,9 @@ class TestSignalQuality:
 
 
 class TestRun:
-    """`_run` is the crash boundary for every network shell-out. A timeout
-    or a missing binary must become an empty string — never an exception
-    that tears down `mm` / `mm net` / `mm watch`."""
+    """`_run` é a fronteira de crash de todo shell-out de rede. Timeout
+    ou binário ausente tem que virar string vazia — nunca uma exceção
+    que derrube `mm` / `mm net` / `mm watch`."""
 
     def test_returns_stdout_on_success(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setattr(
@@ -90,9 +90,9 @@ class TestLocalIp:
 
 
 class TestWifiInfoDegrades:
-    """`system_profiler` routinely exceeds 5s on a cold call. The collector
-    must return an empty dict so the panel renders '—' instead of a
-    traceback."""
+    """`system_profiler` passa de 5s com frequência na primeira chamada.
+    O coletor tem que devolver dict vazio para o painel mostrar '—'
+    em vez de traceback."""
 
     @pytest.fixture(autouse=True)
     def _clear_wifi_cache(self) -> Iterator[None]:
