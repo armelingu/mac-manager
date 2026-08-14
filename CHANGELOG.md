@@ -52,6 +52,10 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
 - Version badge in README bumped to 0.1.1.
 
 ### Fixed
+- **`mm` / `mm net` / `mm watch` no longer crash** when
+  `system_profiler SPAirPortDataType` exceeds its 5s timeout, or when
+  `ipconfig` is missing. Network collection now degrades to empty Wi-Fi
+  / no local IP — the same pattern `security._run` already used.
 - **Caching bug discovered by the new tests**: `cache.cached` and
   `cache.peek` promised to fall back to a plain function call when
   called with unhashable arguments (e.g. a `dict`), but only

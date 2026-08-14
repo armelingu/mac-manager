@@ -30,13 +30,27 @@ class NetworkInfo:
     security: Optional[str]
 
 
+def _run(cmd: list[str], timeout: int = 5) -> str:
+    """Return stdout. Timeouts, missing binaries and OS errors become "".
+
+    Callers degrade to "unknown" instead of crashing `mm` / `mm net` /
+    `mm watch`. Mirrors `macmanager.security._run`.
+    """
+    try:
+        p = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=timeout,
+        )
+        return p.stdout
+    except (subprocess.TimeoutExpired, FileNotFoundError, OSError):
+        return ""
+
+
 def _local_ip(iface: str = "en0") -> Optional[str]:
-    out = subprocess.run(
-        ["ipconfig", "getifaddr", iface],
-        capture_output=True,
-        text=True,
-        check=False,
-    ).stdout.strip()
+    out = _run(["ipconfig", "getifaddr", iface], timeout=2).strip()
     return out or None
 
 
@@ -57,13 +71,7 @@ def _wifi_info() -> dict:
     (no sudo)."""
     data: dict = {}
 
-    out = subprocess.run(
-        ["/usr/sbin/system_profiler", "SPAirPortDataType"],
-        capture_output=True,
-        text=True,
-        check=False,
-        timeout=5,
-    ).stdout
+    out = _run(["/usr/sbin/system_profiler", "SPAirPortDataType"], timeout=5)
 
     cur = re.search(r"Current Network Information:\s*\n\s*([^\n]+):", out)
     if cur:
