@@ -12,7 +12,16 @@ from __future__ import annotations
 
 import pytest
 
-from macmanager.alerts import COOLDOWNS, CRITICAL, HEALTH_WARN, HIGH, LOW, _can_fire
+from macmanager.alerts import (
+    COOLDOWNS,
+    CRITICAL,
+    HEALTH_WARN,
+    HIGH,
+    LOW,
+    _can_fire,
+    check_and_alert,
+)
+from macmanager.battery import BatteryInfo
 
 
 class TestThresholdValues:
@@ -87,3 +96,59 @@ class TestCanFire:
         assert _can_fire(state, "high", cooldown=60) is False
         assert _can_fire(state, "low", cooldown=60) is True
         assert _can_fire(state, "critical", cooldown=60) is True
+
+
+def _battery(**overrides: object) -> BatteryInfo:
+    data: dict = {
+        "percent": 50.0,
+        "is_charging": False,
+        "power_source": "Battery Power",
+        "time_remaining_sec": None,
+        "cycle_count": 12,
+        "max_capacity_mah": 4300,
+        "design_capacity_mah": 4380,
+        "health_percent": 98.0,
+        "temperature_c": 30.0,
+        "fully_charged": False,
+        "serial": "C123",
+    }
+    data.update(overrides)
+    return BatteryInfo(**data)
+
+
+class TestNoBatterySkipsAlerts:
+    """Desktop / ioreg vazio não pode virar spam de CRITICAL no launchd."""
+
+    def test_absent_battery_fires_nothing(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setattr(
+            "macmanager.alerts.get_battery",
+            lambda: _battery(
+                percent=0.0,
+                design_capacity_mah=0,
+                max_capacity_mah=0,
+                health_percent=0.0,
+                cycle_count=0,
+                serial=None,
+            ),
+        )
+        notified: list[str] = []
+        monkeypatch.setattr(
+            "macmanager.alerts.notify",
+            lambda *args, **kwargs: notified.append(kwargs.get("title", "")),
+        )
+        monkeypatch.setattr("macmanager.alerts._load_state", dict)
+        monkeypatch.setattr("macmanager.alerts._save_state", lambda state: None)
+
+        assert check_and_alert() == []
+        assert notified == []
+
+    def test_real_critical_battery_still_fires(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setattr(
+            "macmanager.alerts.get_battery",
+            lambda: _battery(percent=5.0, is_charging=False),
+        )
+        monkeypatch.setattr("macmanager.alerts.notify", lambda *args, **kwargs: None)
+        monkeypatch.setattr("macmanager.alerts._load_state", dict)
+        monkeypatch.setattr("macmanager.alerts._save_state", lambda state: None)
+
+        assert check_and_alert() == ["critical"]

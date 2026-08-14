@@ -51,9 +51,15 @@ def _can_fire(state: dict, key: str, cooldown: int) -> bool:
 
 
 def check_and_alert() -> list[str]:
-    """Evaluates the battery state and fires notifications according to the rules.
-    Returns the list of fired keys (useful for debug/testing)."""
+    """Avalia a bateria e dispara notificações. Devolve as chaves disparadas.
+
+    Sem bateria real (desktop / ioreg vazio) não notifica — percent=0
+    nesses casos dispararia CRITICAL falso a cada 15 min via launchd.
+    """
     bat = get_battery()
+    if not bat.is_present():
+        return []
+
     state = _load_state()
     fired: list[str] = []
 

@@ -28,6 +28,10 @@ class BatteryInfo:
     fully_charged: bool
     serial: Optional[str]
 
+    def is_present(self) -> bool:
+        """False em desktop ou ioreg vazio — DesignCapacity vem 0."""
+        return self.design_capacity_mah > 0
+
 
 _IOREG_KEYS = (
     "CycleCount",
