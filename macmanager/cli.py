@@ -50,12 +50,12 @@ def cmd_status(args=None) -> None:
     from macmanager.disk import render_disk_panel
     from macmanager.network import render_network_panel
     from macmanager.system import render_system_panel
-    from macmanager.ui import console
+    from macmanager.ui import console, safe_panel
 
-    console.print(render_battery_panel())
-    console.print(render_system_panel())
-    console.print(render_disk_panel(full=False))
-    console.print(render_network_panel())
+    console.print(safe_panel("Battery", render_battery_panel, "cyan"))
+    console.print(safe_panel("System", render_system_panel, "magenta"))
+    console.print(safe_panel("Disk", lambda: render_disk_panel(full=False), "green"))
+    console.print(safe_panel("Network", render_network_panel, "blue"))
 
 
 def main(argv: list[str] | None = None) -> int:

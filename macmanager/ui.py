@@ -2,9 +2,33 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
+
 from rich.console import Console
+from rich.panel import Panel
 
 console = Console()
+
+
+def safe_panel(
+    title: str,
+    render: Callable[[], Panel],
+    border_style: str = "red",
+) -> Panel:
+    """Roda o renderer e, se ele explodir, devolve um painel de fallback.
+
+    Assim um coletor morto (timeout, MarkupError, psutil) não derruba o
+    `mm` status nem o `mm watch` inteiro. `KeyboardInterrupt` e
+    `SystemExit` passam — são `BaseException`, não `Exception`.
+    """
+    try:
+        return render()
+    except Exception:
+        return Panel(
+            "[dim]Não foi possível coletar estes dados.[/]",
+            title=f"[bold]{title}[/]",
+            border_style=border_style,
+        )
 
 
 def fmt_bytes(num: float) -> str:

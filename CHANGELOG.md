@@ -52,6 +52,9 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
 - Version badge in README bumped to 0.1.1.
 
 ### Fixed
+- **`mm` e `mm watch` não morrem inteiros** quando um único coletor
+  falha. Cada painel passa por `safe_panel`: a exceção vira um fallback
+  ("Não foi possível coletar estes dados") e os outros painéis seguem.
 - **`mm` / `mm net` / `mm watch` não crasham mais** quando
   `system_profiler SPAirPortDataType` passa do timeout de 5s, ou quando
   `ipconfig` não existe. A coleta de rede degrada para Wi-Fi vazio

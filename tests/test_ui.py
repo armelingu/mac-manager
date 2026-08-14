@@ -7,8 +7,9 @@ plain strings. So we assert on the output directly.
 from __future__ import annotations
 
 import pytest
+from rich.panel import Panel
 
-from macmanager.ui import bar, fmt_bytes, fmt_seconds, health_color, usage_color
+from macmanager.ui import bar, fmt_bytes, fmt_seconds, health_color, safe_panel, usage_color
 
 # ---------------------------------------------------------------------------
 # fmt_bytes
@@ -175,3 +176,40 @@ class TestBar:
             # Remove leading [color] segment.
             glyphs = glyphs.split("]", 1)[1]
             assert len(glyphs) == 20
+
+
+# ---------------------------------------------------------------------------
+# safe_panel
+# ---------------------------------------------------------------------------
+
+
+class TestSafePanel:
+    """Um coletor morto não pode derrubar o status/watch. O helper devolve
+    o painel real no sucesso e um fallback estático em qualquer Exception."""
+
+    def test_returns_renderer_panel_on_success(self) -> None:
+        expected = Panel("ok", title="Battery")
+        assert safe_panel("Battery", lambda: expected) is expected
+
+    def test_returns_fallback_when_renderer_raises(self) -> None:
+        def boom() -> Panel:
+            raise TimeoutError("system_profiler")
+
+        panel = safe_panel("Network", boom, border_style="blue")
+        assert isinstance(panel, Panel)
+        assert "Não foi possível coletar estes dados" in panel.renderable  # type: ignore[operator]
+        assert "Network" in str(panel.title)
+
+    def test_keyboard_interrupt_propagates(self) -> None:
+        def boom() -> Panel:
+            raise KeyboardInterrupt
+
+        with pytest.raises(KeyboardInterrupt):
+            safe_panel("Battery", boom)
+
+    def test_system_exit_propagates(self) -> None:
+        def boom() -> Panel:
+            raise SystemExit(1)
+
+        with pytest.raises(SystemExit):
+            safe_panel("Battery", boom)
