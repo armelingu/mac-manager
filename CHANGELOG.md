@@ -52,6 +52,10 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
 - Version badge in README bumped to 0.1.1.
 
 ### Fixed
+- **SSID, processo, serial e paths com `[` / `]` não crasham mais a UI.**
+  Texto que vem do sistema passa por `safe_text` (escape do Rich) antes
+  de entrar em markup — um Wi-Fi `My[/Home]WiFi` ou um processo
+  `foo[/]bar` deixam de gerar `MarkupError`.
 - **`mm` e `mm watch` não morrem inteiros** quando um único coletor
   falha. Cada painel passa por `safe_panel`: a exceção vira um fallback
   ("Não foi possível coletar estes dados") e os outros painéis seguem.

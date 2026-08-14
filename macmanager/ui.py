@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from rich.console import Console
+from rich.markup import escape
 from rich.panel import Panel
 
 console = Console()
@@ -29,6 +30,17 @@ def safe_panel(
             title=f"[bold]{title}[/]",
             border_style=border_style,
         )
+
+
+def safe_text(value: object) -> str:
+    """Escapa markup Rich em texto que veio do sistema (SSID, processo, path).
+
+    Sem isso, um SSID `My[/Home]WiFi` ou um processo `foo[/]bar` vira
+    `MarkupError` e derruba o painel.
+    """
+    if value is None:
+        return ""
+    return escape(str(value))
 
 
 def fmt_bytes(num: float) -> str:

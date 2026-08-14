@@ -17,7 +17,7 @@ from rich.panel import Panel
 from rich.table import Table
 
 from macmanager.cache import cached
-from macmanager.ui import console, fmt_seconds, health_color
+from macmanager.ui import console, fmt_seconds, health_color, safe_text
 
 OK, WARN, FAIL, INFO = "OK", "WARN", "FAIL", "INFO"
 
@@ -320,9 +320,9 @@ def render_security_panel(checks: Optional[list[Check]] = None) -> Panel:
     t.add_column()
 
     for c in checks:
-        line = c.detail
+        line = safe_text(c.detail)
         if c.tip:
-            line += f"  [dim]· {c.tip}[/]"
+            line += f"  [dim]· {safe_text(c.tip)}[/]"
         t.add_row(STATUS_STYLE.get(c.status, c.status), c.name, line)
 
     return Panel(

@@ -7,9 +7,18 @@ plain strings. So we assert on the output directly.
 from __future__ import annotations
 
 import pytest
+from rich.markup import escape
 from rich.panel import Panel
 
-from macmanager.ui import bar, fmt_bytes, fmt_seconds, health_color, safe_panel, usage_color
+from macmanager.ui import (
+    bar,
+    fmt_bytes,
+    fmt_seconds,
+    health_color,
+    safe_panel,
+    safe_text,
+    usage_color,
+)
 
 # ---------------------------------------------------------------------------
 # fmt_bytes
@@ -213,3 +222,24 @@ class TestSafePanel:
 
         with pytest.raises(SystemExit):
             safe_panel("Battery", boom)
+
+
+# ---------------------------------------------------------------------------
+# safe_text
+# ---------------------------------------------------------------------------
+
+
+class TestSafeText:
+    """Texto do sistema (SSID, processo, path) não pode entrar cru no
+    markup do Rich — `[/]` fecha tag e vira MarkupError."""
+
+    def test_escapes_rich_markup(self) -> None:
+        raw = "My[/Home]WiFi"
+        assert safe_text(raw) == escape(raw)
+        assert safe_text(raw).startswith("My\\[")
+
+    def test_none_becomes_empty_string(self) -> None:
+        assert safe_text(None) == ""
+
+    def test_plain_text_is_unchanged(self) -> None:
+        assert safe_text("en0") == "en0"

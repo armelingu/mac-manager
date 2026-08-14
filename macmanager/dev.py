@@ -20,7 +20,7 @@ from typing import Callable, Optional
 from rich.panel import Panel
 from rich.table import Table
 
-from macmanager.ui import console
+from macmanager.ui import console, safe_text
 
 
 @dataclass
@@ -249,7 +249,7 @@ def render_dev_panels(
     summary.add_row("Detected", f"[green]{total_found}[/] of {total} known tools")
     git_id = _git_identity()
     if git_id:
-        summary.add_row("Git identity", git_id)
+        summary.add_row("Git identity", safe_text(git_id))
 
     panels.append(Panel(summary, title="[bold]Summary[/]", border_style="cyan"))
 
@@ -266,7 +266,7 @@ def render_dev_panels(
         t.add_column(style="dim")
 
         for tool in found:
-            t.add_row(tool.name, tool.version or "?", tool.path or "")
+            t.add_row(tool.name, safe_text(tool.version or "?"), safe_text(tool.path or ""))
 
         if show_missing and missing:
             t.add_row("", "", "")

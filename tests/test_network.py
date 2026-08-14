@@ -4,12 +4,21 @@ from __future__ import annotations
 
 import subprocess
 from collections.abc import Iterator
+from io import StringIO
 from types import SimpleNamespace
 
 import pytest
+from rich.console import Console
 
 from macmanager.cache import clear_all
-from macmanager.network import _local_ip, _run, _signal_quality, _wifi_info
+from macmanager.network import (
+    NetworkInfo,
+    _local_ip,
+    _run,
+    _signal_quality,
+    _wifi_info,
+    render_network_panel,
+)
 
 
 class TestSignalQuality:
@@ -121,3 +130,26 @@ class TestWifiInfoDegrades:
         assert info["security"] == "WPA3 Personal"
         assert info["rssi"] == -55
         assert info["tx_rate"] == "1200"
+
+
+class TestRenderNetworkPanel:
+    """SSID com markup Rich não pode derrubar `mm net` / o painel de status."""
+
+    def test_ssid_with_closing_tag_does_not_raise(self) -> None:
+        info = NetworkInfo(
+            interface="en0",
+            local_ip="192.168.1.2",
+            public_ip="1.2.3.4",
+            ssid="My[/Home]WiFi",
+            bssid=None,
+            rssi=-50,
+            noise=None,
+            channel="36",
+            tx_rate="1200",
+            security="WPA3",
+        )
+        buf = StringIO()
+        Console(file=buf, force_terminal=True, width=80).print(render_network_panel(info))
+        out = buf.getvalue()
+        assert "My" in out
+        assert "WiFi" in out

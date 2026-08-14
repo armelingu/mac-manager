@@ -13,7 +13,7 @@ from rich.panel import Panel
 from rich.table import Table
 
 from macmanager.cache import cached
-from macmanager.ui import bar, console, fmt_bytes, usage_color
+from macmanager.ui import bar, console, fmt_bytes, safe_text, usage_color
 
 CLEAN_TARGETS = [
     "~/Library/Caches",
@@ -119,7 +119,7 @@ def render_disk_panel(info: Optional[DiskInfo] = None, full: bool = True) -> Pan
         total = 0
         for path, size in info.cleanup:
             total += size
-            t.add_row(f"[dim]{path}[/]", f"{fmt_bytes(size)}")
+            t.add_row(f"[dim]{safe_text(path)}[/]", f"{fmt_bytes(size)}")
         t.add_row("", f"[bold cyan]Total recoverable: {fmt_bytes(total)}[/]")
         t.add_row(
             "",
