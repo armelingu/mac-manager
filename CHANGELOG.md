@@ -52,6 +52,10 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
 - Version badge in README bumped to 0.1.1.
 
 ### Fixed
+- **`mm watch -i` e `mm history -n` rejeitam 0 e negativo.** Antes
+  `watch -i -1` crashava no `sleep` e `history -n -5` fatiava o CSV
+  ao contrário. Linhas quebradas do CSV são ignoradas em vez de
+  derrubar `mm history`.
 - **Histórico e cooldown dos alertas saem da árvore do pacote.** `mm log`
   / `mm history` / `mm alerts` gravam em
   `~/Library/Application Support/mac-manager/` (no Linux do CI,

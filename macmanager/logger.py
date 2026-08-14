@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import math
 import os
 import platform
 import shutil
@@ -117,6 +118,30 @@ def cmd_log(args=None) -> None:
     )
 
 
+def parse_history_row(row: dict) -> dict[str, str] | None:
+    """Formata uma linha do CSV. None se o registro estiver quebrado.
+
+    Linha truncada ou percent vazio não pode derrubar `mm history`.
+    """
+    try:
+        ts = (row.get("timestamp") or "").replace("T", " ").strip()
+        percent = float(row["percent"])
+        health = float(row["health_percent"])
+        if not ts or math.isnan(percent) or math.isnan(health):
+            return None
+        temp_raw = row.get("temperature_c") or ""
+        return {
+            "when": ts,
+            "charge": f"{percent:.0f}%",
+            "health": f"{health:.1f}%",
+            "cycles": str(row.get("cycle_count") or "—"),
+            "temp": f"{temp_raw}°C" if temp_raw else "—",
+            "source": "AC" if row.get("is_charging") == "1" else "Bat",
+        }
+    except (TypeError, ValueError, KeyError):
+        return None
+
+
 def cmd_history(args=None) -> None:
     """Shows the last N entries from the CSV."""
     from rich.table import Table
@@ -127,8 +152,14 @@ def cmd_history(args=None) -> None:
         return
 
     n = getattr(args, "n", 10) if args else 10
-    rows = list(csv.DictReader(BATTERY_CSV.open()))
-    rows = rows[-n:]
+    n = max(1, int(n))
+    with BATTERY_CSV.open(newline="", encoding="utf-8") as fh:
+        raw_rows = list(csv.DictReader(fh))
+    rows = []
+    for raw in raw_rows[-n:]:
+        parsed = parse_history_row(raw)
+        if parsed:
+            rows.append(parsed)
 
     t = Table(title=f"Last {len(rows)} measurements", border_style="cyan")
     t.add_column("When", style="dim")
@@ -139,12 +170,5 @@ def cmd_history(args=None) -> None:
     t.add_column("Source")
 
     for r in rows:
-        t.add_row(
-            r["timestamp"].replace("T", " "),
-            f"{float(r['percent']):.0f}%",
-            f"{float(r['health_percent']):.1f}%",
-            r["cycle_count"],
-            f"{r['temperature_c']}°C" if r["temperature_c"] else "—",
-            "AC" if r["is_charging"] == "1" else "Bat",
-        )
+        t.add_row(r["when"], r["charge"], r["health"], r["cycles"], r["temp"], r["source"])
     console.print(t)

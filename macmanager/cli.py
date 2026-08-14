@@ -8,6 +8,14 @@ import sys
 from macmanager import __version__
 
 
+def _positive_int(value: str) -> int:
+    """Rejeita 0 e negativo — `watch -i -1` crashava no sleep."""
+    parsed = int(value)
+    if parsed < 1:
+        raise argparse.ArgumentTypeError("must be >= 1")
+    return parsed
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="mm",
@@ -25,10 +33,18 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("log", help="Records a battery snapshot to the CSV")
 
     history = sub.add_parser("history", help="Shows the last N measurements")
-    history.add_argument("-n", type=int, default=10, help="how many lines to show (default 10)")
+    history.add_argument(
+        "-n", type=_positive_int, default=10, help="how many lines to show (default 10)"
+    )
 
     watch = sub.add_parser("watch", help="Live dashboard (Ctrl+C to exit)")
-    watch.add_argument("-i", "--interval", type=int, default=2, help="refresh interval in seconds")
+    watch.add_argument(
+        "-i",
+        "--interval",
+        type=_positive_int,
+        default=2,
+        help="refresh interval in seconds (minimum 1)",
+    )
 
     sub.add_parser("alerts", help="Evaluates and fires alerts (called by launchd)")
     sub.add_parser("status", help="Quick summary (battery + system + disk)")

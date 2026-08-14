@@ -17,6 +17,7 @@ from macmanager.logger import (
     LOGS_DIR,
     default_logs_dir,
     migrate_legacy,
+    parse_history_row,
     resolve_logs_dir,
 )
 
@@ -124,3 +125,45 @@ class TestMigrateLegacy:
     def test_same_dir_is_a_noop(self, tmp_path: Path) -> None:
         (tmp_path / "battery.csv").write_text("x\n", encoding="utf-8")
         assert migrate_legacy(tmp_path, tmp_path) == []
+
+
+class TestParseHistoryRow:
+    """Linha truncada ou percent vazio não pode derrubar `mm history`."""
+
+    def test_valid_row(self) -> None:
+        parsed = parse_history_row(
+            {
+                "timestamp": "2026-01-01T09:00:00",
+                "percent": "82.4",
+                "is_charging": "1",
+                "health_percent": "99.3",
+                "cycle_count": "12",
+                "temperature_c": "30.5",
+            }
+        )
+        assert parsed == {
+            "when": "2026-01-01 09:00:00",
+            "charge": "82%",
+            "health": "99.3%",
+            "cycles": "12",
+            "temp": "30.5°C",
+            "source": "AC",
+        }
+
+    def test_empty_percent_is_skipped(self) -> None:
+        assert parse_history_row({"timestamp": "2026-01-01T00:00:00", "percent": ""}) is None
+
+    def test_truncated_row_is_skipped(self) -> None:
+        assert parse_history_row({"timestamp": "2026-01-01T00:00:00", "percent": "80"}) is None
+
+    def test_nan_percent_is_skipped(self) -> None:
+        assert (
+            parse_history_row(
+                {
+                    "timestamp": "2026-01-01T00:00:00",
+                    "percent": "NaN",
+                    "health_percent": "99",
+                }
+            )
+            is None
+        )
