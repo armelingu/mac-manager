@@ -11,7 +11,7 @@ from rich.panel import Panel
 from rich.table import Table
 
 from macmanager.cache import cached
-from macmanager.ui import bar, console, fmt_seconds, health_color, usage_color
+from macmanager.ui import bar, console, fmt_seconds, health_color, safe_text, usage_color
 
 
 @dataclass
@@ -168,7 +168,7 @@ def render_battery_panel(info: Optional[BatteryInfo] = None) -> Panel:
     t.add_row(
         "Charge", f"[{pct_color}]{info.percent:.1f}%[/]  {bar(info.percent, color=pct_color)}"
     )
-    t.add_row("State", f"{state}  · source: [bold]{info.power_source}[/]")
+    t.add_row("State", f"{state}  · source: [bold]{safe_text(info.power_source)}[/]")
     if (
         info.time_remaining_sec is not None
         and info.time_remaining_sec > 0
@@ -190,7 +190,7 @@ def render_battery_panel(info: Optional[BatteryInfo] = None) -> Panel:
             f"[{usage_color(info.temperature_c, warn=35, crit=40)}]{info.temperature_c:.1f}°C[/]",
         )
     if info.serial:
-        t.add_row("Serial", f"[dim]{info.serial}[/]")
+        t.add_row("Serial", f"[dim]{safe_text(info.serial)}[/]")
 
     return Panel(t, title="[bold]Battery[/]", border_style="cyan")
 

@@ -13,7 +13,7 @@ from rich.panel import Panel
 from rich.table import Table
 
 from macmanager.cache import cached
-from macmanager.ui import bar, console, fmt_bytes, fmt_seconds, usage_color
+from macmanager.ui import bar, console, fmt_bytes, fmt_seconds, safe_text, usage_color
 
 
 @dataclass
@@ -148,7 +148,7 @@ def render_system_panel(info: Optional[SystemInfo] = None) -> Panel:
         t.add_row("[bold]Top processes[/]", "")
         for p in info.top_processes:
             t.add_row(
-                f"[dim]{p['pid']:>5}[/] {p['name'][:25]}",
+                f"[dim]{p['pid']:>5}[/] {safe_text(p['name'][:25])}",
                 f"CPU [bold]{p['cpu']:5.1f}%[/]  MEM [bold]{fmt_bytes(p['mem'])}[/]",
             )
 

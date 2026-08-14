@@ -33,7 +33,7 @@ from macmanager.doctor import doctor as run_doctor
 from macmanager.network import render_network_panel
 from macmanager.security import check_macos_updates, run_all as run_security
 from macmanager.system import render_system_panel
-from macmanager.ui import console, health_color, safe_panel
+from macmanager.ui import console, health_color, safe_panel, safe_text
 
 
 def _build_layout() -> Layout:
@@ -99,7 +99,7 @@ def _render_health_bar() -> Panel:
                 count = upd.detail.split(" ")[0]
                 upd_str = f"[yellow]{count} pending[/]"
             else:
-                upd_str = f"[dim]{upd.detail}[/]"
+                upd_str = f"[dim]{safe_text(upd.detail)}[/]"
         except Exception:
             upd_str = "[dim]?[/]"
 

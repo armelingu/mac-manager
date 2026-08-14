@@ -13,7 +13,7 @@ from rich.panel import Panel
 from rich.table import Table
 
 from macmanager.cache import cached
-from macmanager.ui import console
+from macmanager.ui import console, safe_text
 
 
 @dataclass
@@ -144,18 +144,18 @@ def render_network_panel(info: Optional[NetworkInfo] = None) -> Panel:
     t.add_column(justify="right", style="dim")
     t.add_column()
 
-    t.add_row("Interface", info.interface)
-    t.add_row("Local IP", info.local_ip or "[dim]—[/]")
-    t.add_row("Public IP", info.public_ip or "[dim]offline[/]")
+    t.add_row("Interface", safe_text(info.interface))
+    t.add_row("Local IP", safe_text(info.local_ip) or "[dim]—[/]")
+    t.add_row("Public IP", safe_text(info.public_ip) or "[dim]offline[/]")
     if info.ssid:
         t.add_row("", "")
-        t.add_row("Wi-Fi", f"[bold]{info.ssid}[/]")
+        t.add_row("Wi-Fi", f"[bold]{safe_text(info.ssid)}[/]")
         if info.security:
-            t.add_row("Security", info.security)
+            t.add_row("Security", safe_text(info.security))
         if info.channel:
-            t.add_row("Channel", info.channel)
+            t.add_row("Channel", safe_text(info.channel))
         if info.tx_rate:
-            t.add_row("TX Rate", f"{info.tx_rate} Mbps")
+            t.add_row("TX Rate", f"{safe_text(info.tx_rate)} Mbps")
         if info.rssi is not None:
             label, color = _signal_quality(info.rssi)
             t.add_row("Signal", f"[{color}]{info.rssi} dBm · {label}[/]")
