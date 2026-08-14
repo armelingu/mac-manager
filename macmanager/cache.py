@@ -19,10 +19,12 @@ T = TypeVar("T")
 _STORE: dict[tuple, tuple[float, object]] = {}
 
 
-def cached(ttl: float):
+def cached(ttl: float, *, cache_none: bool = True):
     """Decorator that caches a function's return for `ttl` seconds.
 
     Use ttl=0 to disable the cache (useful in tests).
+    `cache_none=False` não guarda None — falha de rede no IP público
+    não pode deixar o watch em "offline" por 5 minutos.
     """
 
     def deco(fn: Callable[..., T]) -> Callable[..., T]:
@@ -46,6 +48,8 @@ def cached(ttl: float):
             if entry and (now - entry[0]) < ttl:
                 return entry[1]  # type: ignore[return-value]
             value = fn(*args, **kwargs)
+            if value is None and not cache_none:
+                return value
             _STORE[cache_key] = (now, value)
             return value
 

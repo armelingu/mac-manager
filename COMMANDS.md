@@ -111,9 +111,9 @@ mm clean
 **What it does:** network info.
 
 **Shows:**
-- Active interface (`en0`, etc.)
+- Active interface (from the default route; falls back to `en0`)
 - Local IP
-- Public IP (queries `api.ipify.org`)
+- Public IP (queries `api.ipify.org`; a failed lookup is not cached)
 - SSID of connected Wi-Fi
 - Security (WPA2/WPA3)
 - Channel and width (e.g. 52 / 5GHz / 80MHz)
