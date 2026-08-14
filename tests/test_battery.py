@@ -55,3 +55,33 @@ class TestBatteryInfo:
         # Use subset: extra fields are fine (forward-compatible), missing
         # ones are a breaking change.
         assert expected.issubset(actual), f"missing fields: {expected - actual}"
+
+    def test_is_present_requires_design_capacity(self) -> None:
+        absent = BatteryInfo(
+            percent=0.0,
+            is_charging=False,
+            power_source="Battery Power",
+            time_remaining_sec=None,
+            cycle_count=0,
+            max_capacity_mah=0,
+            design_capacity_mah=0,
+            health_percent=0.0,
+            temperature_c=None,
+            fully_charged=False,
+            serial=None,
+        )
+        present = BatteryInfo(
+            percent=0.0,
+            is_charging=False,
+            power_source="Battery Power",
+            time_remaining_sec=None,
+            cycle_count=12,
+            max_capacity_mah=4300,
+            design_capacity_mah=4380,
+            health_percent=98.0,
+            temperature_c=30.0,
+            fully_charged=False,
+            serial="C123",
+        )
+        assert absent.is_present() is False
+        assert present.is_present() is True

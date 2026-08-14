@@ -52,6 +52,10 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
 - Version badge in README bumped to 0.1.1.
 
 ### Fixed
+- **`mm alerts` não dispara mais CRITICAL em Mac sem bateria.** Desktop
+  ou `ioreg` vazio devolve percent=0 / design=0; o launchd a cada 15 min
+  avisava "plug in the charger". Sem `DesignCapacity` o comando agora
+  sai quieto.
 - **SSID, processo, serial e paths com `[` / `]` não crasham mais a UI.**
   Texto que vem do sistema passa por `safe_text` (escape do Rich) antes
   de entrar em markup — um Wi-Fi `My[/Home]WiFi` ou um processo

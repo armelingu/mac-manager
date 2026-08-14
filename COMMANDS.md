@@ -216,6 +216,7 @@ mm alerts
 ```
 
 > The state of the last notification is kept in `logs/.alert_state` (JSON with timestamps), preventing spam.
+> Macs without a battery (desktop, or empty `ioreg`) produce no alerts.
 
 ---
 
