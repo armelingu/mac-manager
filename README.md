@@ -39,11 +39,15 @@ pipx install mac-manager   # isolated, recommended
 pip install --user mac-manager
 ```
 
-After installation, the `mm` command is on your `PATH`.
+After installation, the `mm` command is on your `PATH`. Register the
+background agents (daily battery log + alerts) with:
 
-> `pipx`/`pip` installs give you the CLI only. The background
-> `launchd` agents (daily log + battery alerts) are set up by the
-> source install below, or you can register them manually later.
+```bash
+mm setup
+```
+
+`mm uninstall` removes those agents. It does **not** uninstall the CLI —
+use `brew uninstall mac-manager` or `pipx uninstall mac-manager` for that.
 
 ### From source
 
@@ -89,6 +93,12 @@ source ~/.zshrc
 | `mm log` | Writes a battery snapshot to the CSV |
 | `mm history -n 20` | Last N recorded measurements |
 | `mm alerts` | Runs the alert check (called by launchd) |
+
+### Setup
+| Command | What it does |
+|---|---|
+| `mm setup` | Registers launchd agents (daily log at 09:00 + alerts every 15 min) |
+| `mm uninstall` | Removes those agents; keeps the CLI and battery history |
 
 ### Security
 | Command | What it does |
@@ -153,11 +163,19 @@ mac-manager/
 ## Uninstallation
 
 ```bash
-./uninstall.sh
+mm uninstall          # launchd agents only (Homebrew / pipx / source)
+./uninstall.sh        # source install: agents + symlink + venv
 ```
 
-Removes launchd agents, symlink and venv. Preserves battery history in
-`~/Library/Application Support/mac-manager/`.
+`mm uninstall` does not remove the CLI. For packaged installs:
+
+```bash
+brew uninstall mac-manager
+# or
+pipx uninstall mac-manager
+```
+
+Battery history in `~/Library/Application Support/mac-manager/` is preserved.
 
 ## Status
 

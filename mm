@@ -20,6 +20,10 @@ if [ ! -x "$VENV_PY" ]; then
     exit 1
 fi
 
+# Absolute wrapper path for `mm setup` — launchd must exec this file,
+# not `python -m` (argv0 is cli.py when we use -m).
+export MACMANAGER_BIN="$SCRIPT_DIR/mm"
+
 # Run from the project root to ensure the package is discovered,
 # regardless of the caller's cwd (terminal or launchd).
 cd "$SCRIPT_DIR"

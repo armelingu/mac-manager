@@ -19,6 +19,7 @@ mm --version           # installed version
 | **Hardware/system** | [`mm`](#mm-status), [`mm battery`](#mm-battery), [`mm health`](#mm-health), [`mm disk`](#mm-disk), [`mm clean`](#mm-clean), [`mm net`](#mm-net) |
 | **Visualization** | [`mm watch`](#mm-watch), [`mm doctor`](#mm-doctor) |
 | **Battery — history** | [`mm log`](#mm-log), [`mm history`](#mm-history), [`mm alerts`](#mm-alerts) |
+| **Setup** | [`mm setup`](#mm-setup), [`mm uninstall`](#mm-uninstall) |
 | **Security** | [`mm security`](#mm-security) |
 | **Development** | [`mm dev`](#mm-dev), [`mm dev --all`](#mm-dev---all), [`mm dev --check`](#mm-dev---check) |
 
@@ -224,6 +225,36 @@ mm alerts
 
 ---
 
+## Setup
+
+### `mm setup`
+**What it does:** registers the two launchd agents so Homebrew / pipx / pip installs get the same background automation as `./install.sh`.
+
+**Writes** `~/Library/LaunchAgents/com.macmanager.battery-log.plist` and `com.macmanager.battery-alert.plist`, pointing at the `mm` you just ran (absolute path, without following Homebrew's Cellar symlink). Agent stdout/stderr go to `~/Library/Application Support/mac-manager/`.
+
+**When to use:** once after `brew install` or `pipx install`. Safe to re-run after an upgrade.
+
+```bash
+mm setup
+```
+
+macOS only. Exits `1` on Linux or if the `mm` binary cannot be found.
+
+---
+
+### `mm uninstall`
+**What it does:** unloads and deletes those launchd agents. Does **not** uninstall the CLI, the venv, or the CSV history.
+
+**When to use:** you want to stop daily logs and notifications but keep `mm`.
+
+```bash
+mm uninstall
+```
+
+To remove the CLI itself: `brew uninstall mac-manager` or `pipx uninstall mac-manager`. Source installs can still run `./uninstall.sh` (agents + symlink + venv).
+
+---
+
 ## Security
 
 ### `mm security`
@@ -315,7 +346,7 @@ mm dev --check
 
 ## Commands invoked by launchd (background)
 
-You normally **don't** run these manually — they stay active automatically after `install.sh`:
+You normally **don't** run these manually — they stay active after `mm setup` (or `./install.sh`):
 
 | When it runs | Command | What it does |
 |---|---|---|
@@ -327,10 +358,10 @@ To confirm they're active:
 launchctl list | grep macmanager
 ```
 
-To stop/restart manually:
+To stop/restart:
 ```bash
-launchctl unload ~/Library/LaunchAgents/com.macmanager.battery-log.plist
-launchctl load   ~/Library/LaunchAgents/com.macmanager.battery-log.plist
+mm uninstall    # stop
+mm setup        # start / refresh after an upgrade
 ```
 
 ---
@@ -361,6 +392,7 @@ mm history -n 30
 ## Output and exit codes
 
 - All commands exit with `0` on success.
+- `mm setup` exits `1` on non-macOS or if the `mm` binary cannot be found / launchctl rejects the plist.
 - `mm alerts` always exits with `0` (even when it fires a critical alert — it's just a notification).
 - Commands that fail to collect a metric (e.g. sandbox blocking) return `WARN`/`?` instead of erroring out.
 
@@ -370,12 +402,14 @@ mm history -n 30
 |---|---|
 | `~/Library/Application Support/mac-manager/battery.csv` | Append-only history of battery measurements |
 | `~/Library/Application Support/mac-manager/.alert_state` | Timestamps of the last notification of each type (JSON, controls cooldown) |
-| `logs/launchd-log.{out,err}` | stdout/stderr of the agent that runs `mm log` (source install) |
-| `logs/launchd-alert.{out,err}` | stdout/stderr of the agent that runs `mm alerts` (source install) |
+| `~/Library/Application Support/mac-manager/launchd-log.{out,err}` | stdout/stderr of the agent that runs `mm log` |
+| `~/Library/Application Support/mac-manager/launchd-alert.{out,err}` | stdout/stderr of the agent that runs `mm alerts` |
 
 ## Reinstall / uninstall
 
 ```bash
-./install.sh    # creates venv, symlink ~/.local/bin/mm and loads launchd agents
-./uninstall.sh  # removes everything (preserves CSVs in Application Support)
+mm setup        # register (or refresh) launchd agents — Homebrew, pipx, source
+mm uninstall    # remove launchd agents only; keeps CLI and CSV
+./install.sh    # source install: venv, symlink ~/.local/bin/mm, then mm setup
+./uninstall.sh  # source install: mm uninstall + symlink + venv
 ```

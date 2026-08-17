@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Removes launchd agents, symlink and venv. Does not delete the CSV logs.
+# Removes launchd agents (via `mm uninstall` when available), symlink and
+# venv. Does not delete the CSV logs.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -7,6 +8,11 @@ LAUNCH_DIR="$HOME/Library/LaunchAgents"
 
 echo "==> Mac Manager · uninstall"
 
+if [ -x "$HOME/.local/bin/mm" ]; then
+    "$HOME/.local/bin/mm" uninstall || true
+fi
+
+# Fallback for installs that predate `mm uninstall`.
 for name in com.macmanager.battery-log com.macmanager.battery-alert; do
     plist="$LAUNCH_DIR/${name}.plist"
     if [ -f "$plist" ]; then

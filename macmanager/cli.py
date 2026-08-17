@@ -49,6 +49,14 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("alerts", help="Evaluates and fires alerts (called by launchd)")
     sub.add_parser("status", help="Quick summary (battery + system + disk)")
     sub.add_parser("security", help="Security audit (FileVault, SIP, Firewall, ...)")
+    sub.add_parser(
+        "setup",
+        help="Register launchd agents (daily log + battery alerts)",
+    )
+    sub.add_parser(
+        "uninstall",
+        help="Remove launchd agents (does not uninstall the CLI)",
+    )
 
     dev = sub.add_parser("dev", help="Inventory of development tools")
     dev.add_argument(
@@ -101,6 +109,8 @@ def main(argv: list[str] | None = None) -> int:
         "alerts": "macmanager.alerts:cmd_alerts",
         "security": "macmanager.security:cmd_security",
         "dev": "macmanager.dev:cmd_dev",
+        "setup": "macmanager.agents:cmd_setup",
+        "uninstall": "macmanager.agents:cmd_uninstall",
         "status": None,
     }
 
@@ -111,8 +121,8 @@ def main(argv: list[str] | None = None) -> int:
 
     module_path, fn_name = handler.split(":")
     module = __import__(module_path, fromlist=[fn_name])
-    getattr(module, fn_name)(args)
-    return 0
+    result = getattr(module, fn_name)(args)
+    return int(result) if result is not None else 0
 
 
 if __name__ == "__main__":
