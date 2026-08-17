@@ -32,23 +32,16 @@ mkdir -p "$HOME/.local/bin"
 ln -sf "$SCRIPT_DIR/mm" "$HOME/.local/bin/mm"
 echo "==> symlink: $HOME/.local/bin/mm -> $SCRIPT_DIR/mm"
 
-# 4. Ensure logs directory
-mkdir -p "$SCRIPT_DIR/logs"
+# 4. Register launchd agents via the same path brew/pipx users get:
+#    `mm setup` writes plists that point at this wrapper and log into
+#    ~/Library/Application Support/mac-manager/.
+if "$HOME/.local/bin/mm" setup; then
+    echo "==> launchd agents registered"
+else
+    echo "[warning] could not register launchd agents. Run: mm setup" >&2
+fi
 
-# 5. Install launchd agents (daily log + alerts)
-LAUNCH_DIR="$HOME/Library/LaunchAgents"
-mkdir -p "$LAUNCH_DIR"
-
-for name in com.macmanager.battery-log com.macmanager.battery-alert; do
-    src="launchd/${name}.plist"
-    dest="$LAUNCH_DIR/${name}.plist"
-    sed "s|{{SCRIPT_DIR}}|$SCRIPT_DIR|g" "$src" > "$dest"
-    launchctl unload "$dest" 2>/dev/null || true
-    launchctl load "$dest"
-    echo "==> launchd: $name loaded"
-done
-
-# 6. PATH check
+# 5. PATH check
 case ":$PATH:" in
     *":$HOME/.local/bin:"*) ;;
     *)
@@ -75,4 +68,5 @@ echo "Active automation:"
 echo "   • Daily log at 09:00 → ~/Library/Application Support/mac-manager/battery.csv"
 echo "   • Battery alerts every 15 min (native notifications)"
 echo ""
-echo "To uninstall everything: ./uninstall.sh"
+echo "To unregister agents: mm uninstall"
+echo "To uninstall everything (source install): ./uninstall.sh"

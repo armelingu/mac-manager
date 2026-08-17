@@ -21,6 +21,7 @@ import macmanager
 
 PUBLIC_MODULES = [
     "macmanager",
+    "macmanager.agents",
     "macmanager.alerts",
     "macmanager.battery",
     "macmanager.cache",
@@ -75,6 +76,8 @@ def test_cli_parser_builds_and_advertises_all_commands() -> None:
         "status",
         "security",
         "dev",
+        "setup",
+        "uninstall",
     ):
         assert command in help_text, f"CLI help is missing the `{command}` subcommand"
 

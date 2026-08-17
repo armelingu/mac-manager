@@ -20,6 +20,15 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
 
 ## [Unreleased]
 
+### Added
+- **`mm setup` / `mm uninstall` registram os agents do launchd** depois de
+  `brew` / `pipx` / `pip`. Homebrew instalava só o CLI; log diário e
+  alerta de bateria ficavam no `./install.sh`. `mm setup` grava os plists
+  em `~/Library/LaunchAgents/` apontando para o `mm` invocado (caminho
+  absoluto, sem seguir o symlink do Cellar) e manda stdout/stderr do
+  agent para Application Support. `mm uninstall` tira só os agents —
+  o CLI e o CSV ficam. `./install.sh` passa a chamar `mm setup`.
+
 ## [0.1.2] — 2026-08-14
 
 ### Added
