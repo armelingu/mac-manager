@@ -11,7 +11,7 @@
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
 [![Platform: macOS](https://img.shields.io/badge/platform-macOS-lightgrey.svg)](https://www.apple.com/macos/)
-[![Version](https://img.shields.io/badge/version-0.1.2-orange.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.2.0-orange.svg)](./CHANGELOG.md)
 [![Status: alpha](https://img.shields.io/badge/status-alpha-yellow.svg)](#status)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
 

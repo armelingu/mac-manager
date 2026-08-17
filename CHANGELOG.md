@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-08-17
+
 ### Added
 - **`mm setup` / `mm uninstall` registram os agents do launchd** depois de
   `brew` / `pipx` / `pip`. Homebrew instalava só o CLI; log diário e
@@ -348,7 +350,8 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
 - `NOTICE` — required attribution file under Apache 2.0; lists `rich` (MIT)
   and `psutil` (BSD-3-Clause) as runtime dependencies.
 
-[Unreleased]: https://github.com/armelingu/mac-manager/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/armelingu/mac-manager/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/armelingu/mac-manager/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/armelingu/mac-manager/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/armelingu/mac-manager/releases/tag/v0.1.1
 [0.1.0]: https://github.com/armelingu/mac-manager/releases/tag/v0.1.0

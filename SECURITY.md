@@ -8,7 +8,8 @@ supported line.
 
 | Version | Status                  |
 | ------- | ----------------------- |
-| `0.1.x` | Supported (current)     |
+| `0.2.x` | Supported (current)     |
+| `0.1.x` | Unsupported             |
 | `< 0.1` | Unsupported             |
 
 Once Mac Manager reaches `1.0.0`, this table will list every minor line
